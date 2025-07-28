@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AgriMitra - Login</title>
   <style>
+    /* तुमचं मूळ CSS जसंच्या तसं ठेवलेलं आहे */
     * {
       box-sizing: border-box;
     }
-
     body {
       margin: 0;
       padding: 0;
@@ -21,12 +21,10 @@
       height: 100vh;
       color: white;
     }
-
     .logo {
       width: 150px;
       margin-bottom: 25px;
     }
-
     .card {
       background: #2a2a40;
       padding: 30px 25px;
@@ -35,13 +33,11 @@
       max-width: 360px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
-
     .tabs {
       display: flex;
       justify-content: space-around;
       margin-bottom: 25px;
     }
-
     .tab {
       flex: 1;
       text-align: center;
@@ -52,21 +48,17 @@
       color: #ccc;
       transition: 0.3s;
     }
-
     .tab.active {
       color: white;
       border-bottom: 2px solid white;
     }
-
     .form {
       display: none;
       flex-direction: column;
     }
-
     .form.active {
       display: flex;
     }
-
     input {
       margin-bottom: 15px;
       padding: 14px;
@@ -74,7 +66,6 @@
       border: none;
       font-size: 16px;
     }
-
     .main-btn {
       margin-top: 5px;
       padding: 14px;
@@ -87,11 +78,9 @@
       cursor: pointer;
       transition: 0.3s;
     }
-
     .main-btn:hover {
       opacity: 0.9;
     }
-
     .google-btn {
       margin-top: 15px;
       padding: 12px;
@@ -108,11 +97,9 @@
       cursor: pointer;
       transition: 0.3s;
     }
-
     .google-btn:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
-
     .google-icon {
       width: 20px;
       height: 20px;
@@ -149,6 +136,7 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyA5tM-5HRT-_0DLN7VgggOP_2G8sllO3Ko",
@@ -159,11 +147,9 @@
       appId: "1:1048874744051:web:bba0ae849ebe1a7a249f86",
       measurementId: "G-9XY1XH231E"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Switch Tabs
     function switchTab(tabName) {
       document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.form').forEach(form => form.classList.remove('active'));
@@ -171,50 +157,53 @@
       document.getElementById(tabName).classList.add('active');
     }
 
-    // Google Login
-    document.getElementById("googleLoginBtn").addEventListener("click", () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then((result) => {
-          alert("Welcome " + result.user.email);
-          window.location.href = "preference.html";
-        })
-        .catch((error) => {
-          alert("Google login failed: " + error.message);
-        });
-    });
+    // JS फक्त लोड झाल्यावर चालवा
+    window.onload = function () {
+      // Email/Password Login
+      document.getElementById("loginBtn").addEventListener("click", () => {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
 
-    // Email/Password Login
-    document.getElementById("loginBtn").addEventListener("click", () => {
-      const email = document.getElementById("loginEmail").value;
-      const password = document.getElementById("loginPassword").value;
+        auth.signInWithEmailAndPassword(email, password)
+          .then(() => {
+            alert("Login successful!");
+            window.location.href = "preference.html";
+          })
+          .catch(error => alert("Login failed: " + error.message));
+      });
 
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          alert("Login successful!");
-          window.location.href = "preference.html";
-        })
-        .catch(error => alert("Login failed: " + error.message));
-    });
+      // Email/Password Sign Up
+      document.getElementById("signupBtn").addEventListener("click", () => {
+        const email = document.getElementById("signupEmail").value;
+        const password = document.getElementById("signupPassword").value;
+        const confirm = document.getElementById("signupConfirm").value;
 
-    // Email/Password Sign Up
-    document.getElementById("signupBtn").addEventListener("click", () => {
-      const email = document.getElementById("signupEmail").value;
-      const password = document.getElementById("signupPassword").value;
-      const confirm = document.getElementById("signupConfirm").value;
+        if (password !== confirm) {
+          alert("Passwords do not match.");
+          return;
+        }
 
-      if (password !== confirm) {
-        alert("Passwords do not match.");
-        return;
-      }
+        auth.createUserWithEmailAndPassword(email, password)
+          .then(() => {
+            alert("Sign up successful!");
+            window.location.href = "preference.html";
+          })
+          .catch(error => alert("Sign up failed: " + error.message));
+      });
 
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          alert("Sign up successful!");
-          window.location.href = "preference.html";
-        })
-        .catch(error => alert("Sign up failed: " + error.message));
-    });
+      // Google Login
+      document.getElementById("googleLoginBtn").addEventListener("click", () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider)
+          .then((result) => {
+            alert("Welcome " + result.user.email);
+            window.location.href = "preference.html";
+          })
+          .catch((error) => {
+            alert("Google login failed: " + error.message);
+          });
+      });
+    };
   </script>
 </body>
 </html>
