@@ -194,16 +194,23 @@
       });
 
       // ✅ Google Sign In
-      document.getElementById("googleLoginBtn").addEventListener("click", () => {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider)
-          .then((result) => {
-            alert("Welcome " + result.user.email);
-            window.location.href = "preference.html";
-          })
-          .catch((error) => {
-            alert("Google login failed: " + error.message);
-          });
+      // Google Sign-In with Redirect
+document.getElementById("googleLoginBtn").addEventListener("click", () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithRedirect(provider);
+});
+
+// Google Login नंतर redirect झाल्यावर User Info मिळवायचं
+auth.getRedirectResult()
+  .then((result) => {
+    if (result.user) {
+      alert("Welcome " + result.user.email);
+      window.location.href = "preference.html";
+    }
+  })
+  .catch((error) => {
+    alert("Google login failed: " + error.message);
+  });
       });
     };
   </script>
