@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AgriMitra - Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #1e1e2f, #3a3a5f);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+    }
+    .logo {
+      width: 150px;
+      margin-bottom: 25px;
+    }
+    .card {
+      background: #2a2a40;
+      padding: 30px 25px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 360px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 25px;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-weight: 600;
+      color: #ccc;
+      transition: 0.3s;
+    }
+    .tab.active {
+      color: white;
+      border-bottom: 2px solid white;
+    }
+    .form {
+      display: none;
+      flex-direction: column;
+    }
+    .form.active {
+      display: flex;
+    }
+    input {
+      margin-bottom: 15px;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+    .main-btn {
+      margin-top: 5px;
+      padding: 14px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .main-btn:hover {
+      opacity: 0.9;
+    }
+    .google-btn {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 25px;
+      border: 1px solid white;
+      background: transparent;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .google-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .google-icon {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ Logo Image -->
+  <img src="https://raw.githubusercontent.com/amol632/Agrimitra-/refs/heads/main/file_00000000c07461f6b7089f1196f12216%20(1).png" class="logo" alt="AgriMitra Logo">
+
+  <div class="card">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">Login</div>
+      <div class="tab" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+
+    <!-- ✅ Login Form -->
+    <div id="login" class="form active">
+      <input type="email" id="loginEmail" placeholder="Enter email" />
+      <input type="password" id="loginPassword" placeholder="Enter password" />
+      <button class="main-btn" id="loginBtn">Login</button>
+      <button class="google-btn" id="googleLoginBtn">
+        <img class="google-icon" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" />
+        Continue with Google
+      </button>
+    </div>
+
+    <!-- ✅ Sign Up Form -->
+    <div id="signup" class="form">
+      <input type="email" id="signupEmail" placeholder="Enter email" />
+      <input type="password" id="signupPassword" placeholder="Enter password" />
+      <input type="password" id="signupConfirm" placeholder="Confirm password" />
+      <button class="main-btn" id="signupBtn">Sign Up</button>
+    </div>
+  </div>
+
+  <!-- ✅ Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+
+  <script>
+    // ✅ Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCiFiazAT4lummi9MJTkDOU_ZhpgeBHXGU",
+      authDomain: "agrimitra-6b944.firebaseapp.com",
+      projectId: "agrimitra-6b944",
+      storageBucket: "agrimitra-6b944.appspot.com",
+      messagingSenderId: "190603132023",
+      appId: "1:190603132023:web:dc3f122284891e180f9a72",
+      measurementId: "G-7MXB81G9PW"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // ✅ Tab switch
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.form').forEach(form => form.classList.remove('active'));
+      document.querySelector(`.tab[onclick*='${tabName}']`).classList.add('active');
+      document.getElementById(tabName).classList.add('active');
+    }
+
+    // ✅ On Load
+    window.onload = function () {
+
+      // Login
+      document.getElementById("loginBtn").addEventListener("click", () => {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        if (!email || !password) {
+          alert("Please enter email and password.");
+          return;
+        }
+
+        auth.signInWithEmailAndPassword(email, password)
+          .then(() => {
+            alert("✅ Login successful!");
+            window.location.href = "dashboard.html";
+          })
+          .catch(error => alert("❌ Login failed: " + error.message));
+      });
+
+      // Sign Up
+      document.getElementById("signupBtn").addEventListener("click", () => {
+        const email = document.getElementById("signupEmail").value;
+        const password = document.getElementById("signupPassword").value;
+        const confirm = document.getElementById("signupConfirm").value;
+
+        if (!email || !password || !confirm) {
+          alert("All fields are required.");
+          return;
+        }
+
+        if (password !== confirm) {
+          alert("Passwords do not match.");
+          return;
+        }
+
+        auth.createUserWithEmailAndPassword(email, password)
+          .then(() => {
+            alert("✅ Sign up successful!");
+            window.location.href = "dashboard.html";
+          })
+          .catch(error => alert("❌ Sign up failed: " + error.message));
+      });
+
+      // Google Sign In
+      document.getElementById("googleLoginBtn").addEventListener("click", () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider)
+          .then((result) => {
+            alert("👋 Welcome " + result.user.email);
+            window.location.href = "dashboard.html";
+          })
+          .catch((error) => {
+            alert("❌ Google login failed: " + error.message);
+          });
+      });
+    };
+  </script>
+</body>
+</html>
