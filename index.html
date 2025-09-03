@@ -3,138 +3,231 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriMitra - लॉगिन / साइनअप</title>
+  <title>AgriMitra Login</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #ff9a9e, #fbc2eb); /* गुलाबी gradient */
-      font-family: Arial, sans-serif;
-    }
-    .box {
-      background: #fff;
-      padding: 25px;
-      border-radius: 16px;
-      width: 320px;
-      text-align: center;
-      box-shadow: 0px 6px 15px rgba(0,0,0,0.3);
-    }
-    .tabs {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 20px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .tab {
-      padding: 8px;
-      border-bottom: 3px solid transparent;
-    }
-    .tab.active {
-      border-color: #e91e63;
-      color: #e91e63;
-    }
-    form {
-      display: none;
-    }
-    form.active {
-      display: block;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: 2px solid #e91e63;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 8px;
-      background: #e91e63;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #ad1457;
-    }
-    .google-btn {
-      margin-top: 15px;
-      background: white;
-      border: 2px solid #e91e63;
-      color: #e91e63;
-      font-size: 16px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .google-btn:hover {
-      background: #fce4ec;
-    }
-    .google-icon {
-      width: 20px;
-      height: 20px;
-    }
+  html, body {
+    margin: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #ff9a9e, #fecfef);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+  }
+
+  .tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+  }
+  .tabs button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+  .tabs button.active {
+    color: #e91e63;
+    border-bottom: 2px solid #e91e63;
+  }
+
+  .input-group {
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  .input-group label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .input-group input {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #e91e63;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 10px;
+    background: #e91e63;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .btn:hover {
+    background: #d81b60;
+  }
+
+  .google-btn {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 2px solid #e91e63;
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .google-btn img {
+    width: 18px;
+    height: 18px;
+  }
   </style>
 </head>
 <body>
-  <div class="box">
+  <div class="container">
     <div class="tabs">
-      <div class="tab active" onclick="showForm('login')">🔑 लॉगिन</div>
-      <div class="tab" onclick="showForm('signup')">📝 साइनअप</div>
+      <button id="loginTab" class="active">🔑 लॉगिन</button>
+      <button id="signupTab">📝 साइनअप</button>
     </div>
 
-    <!-- लॉगिन फॉर्म -->
-    <form id="loginForm" class="active">
-      <input type="email" placeholder="📧 ई-मेल टाका" required>
-      <input type="password" placeholder="🔒 पासवर्ड टाका" required>
-      <button type="button">लॉगिन</button>
-      <button type="button" class="google-btn">
-        <img src="https://www.svgrepo.com/show/355037/google.svg" class="google-icon" alt="Google">
+    <!-- Login Form -->
+    <div id="loginForm">
+      <div class="input-group">
+        <label>ई-मेल टाका</label>
+        <input type="email" id="loginEmail" placeholder="ई-मेल">
+      </div>
+      <div class="input-group">
+        <label>पासवर्ड टाका</label>
+        <input type="password" id="loginPassword" placeholder="पासवर्ड">
+      </div>
+      <button class="btn" id="loginBtn">लॉगिन</button>
+      <div class="google-btn" id="googleLogin">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
         Continue with Google
-      </button>
-    </form>
+      </div>
+    </div>
 
-    <!-- साइनअप फॉर्म -->
-    <form id="signupForm">
-      <input type="text" placeholder="👤 नाव टाका" required>
-      <input type="email" placeholder="📧 ई-मेल टाका" required>
-      <input type="password" placeholder="🔒 पासवर्ड टाका" required>
-      <button type="button">साइनअप</button>
-      <button type="button" class="google-btn">
-        <img src="https://www.svgrepo.com/show/355037/google.svg" class="google-icon" alt="Google">
-        Continue with Google
-      </button>
-    </form>
+    <!-- Signup Form -->
+    <div id="signupForm" style="display:none;">
+      <div class="input-group">
+        <label>नाव</label>
+        <input type="text" id="signupFirstName" placeholder="तुमचं नाव">
+      </div>
+      <div class="input-group">
+        <label>आडनाव</label>
+        <input type="text" id="signupLastName" placeholder="तुमचं आडनाव">
+      </div>
+      <div class="input-group">
+        <label>ई-मेल</label>
+        <input type="email" id="signupEmail" placeholder="ई-मेल">
+      </div>
+      <div class="input-group">
+        <label>पासवर्ड</label>
+        <input type="password" id="signupPassword" placeholder="पासवर्ड">
+      </div>
+      <button class="btn" id="signupBtn">साइनअप</button>
+    </div>
   </div>
 
-  <script>
-    function showForm(type) {
-      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      document.querySelectorAll("form").forEach(f => f.classList.remove("active"));
-      if (type === "login") {
-        document.querySelector(".tabs .tab:nth-child(1)").classList.add("active");
-        document.getElementById("loginForm").classList.add("active");
-      } else {
-        document.querySelector(".tabs .tab:nth-child(2)").classList.add("active");
-        document.getElementById("signupForm").classList.add("active");
-      }
-    }
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCiFiazAT4lummi9MJTkDOU_ZhpgeBHXGU",
+      authDomain: "agrimitra-6b944.firebaseapp.com",
+      projectId: "agrimitra-6b944",
+      storageBucket: "agrimitra-6b944.firebasestorage.app",
+      messagingSenderId: "190603132023",
+      appId: "1:190603132023:web:dc3f122284891e180f9a72",
+      measurementId: "G-7MXB81G9PW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Tabs
+    const loginTab = document.getElementById("loginTab");
+    const signupTab = document.getElementById("signupTab");
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+
+    loginTab.addEventListener("click", () => {
+      loginForm.style.display = "block";
+      signupForm.style.display = "none";
+      loginTab.classList.add("active");
+      signupTab.classList.remove("active");
+    });
+    signupTab.addEventListener("click", () => {
+      loginForm.style.display = "none";
+      signupForm.style.display = "block";
+      signupTab.classList.add("active");
+      loginTab.classList.remove("active");
+    });
+
+    // Login
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          alert("लॉगिन यशस्वी ✅");
+          console.log(userCredential.user);
+        })
+        .catch((error) => {
+          alert("त्रुटी: " + error.message);
+        });
+    });
+
+    // Signup
+    document.getElementById("signupBtn").addEventListener("click", () => {
+      const firstName = document.getElementById("signupFirstName").value;
+      const lastName = document.getElementById("signupLastName").value;
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          // नाव + आडनाव user profile मध्ये टाकतो
+          updateProfile(user, {
+            displayName: firstName + " " + lastName
+          }).then(() => {
+            alert("साइनअप यशस्वी 🎉\nस्वागत आहे, " + firstName + "!");
+          });
+        })
+        .catch((error) => {
+          alert("त्रुटी: " + error.message);
+        });
+    });
+
+    // Google Login
+    document.getElementById("googleLogin").addEventListener("click", () => {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          alert("Google Login यशस्वी 🎉");
+          console.log(result.user);
+        })
+        .catch((error) => {
+          alert("त्रुटी: " + error.message);
+        });
+    });
   </script>
 </body>
 </html>
