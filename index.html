@@ -10,127 +10,109 @@
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #ff9a9e, #fecfef);
       display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
+      justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      padding-top: 30px;
+      height: 100vh;
+      flex-direction: column;
     }
 
-    /* Logo */
     .logo {
       text-align: center;
       margin-bottom: 15px;
     }
     .logo img {
-      width: 120px;
-      height: 120px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
-      object-fit: contain;
     }
 
-    /* Container */
     .container {
       background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0px 6px 20px rgba(0,0,0,0.2);
-      width: 320px;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
+      width: 300px;   /* बॉक्सची रुंदी थोडी कमी केली */
       text-align: center;
     }
 
-    /* Tabs */
     .tabs {
       display: flex;
       justify-content: space-around;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       border-bottom: 2px solid #eee;
     }
     .tabs button {
-      flex: 1;
       background: none;
       border: none;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
-      padding: 8px;
+      padding: 6px 12px;
       cursor: pointer;
     }
     .tabs button.active {
       color: #e91e63;
-      border-bottom: 3px solid #e91e63;
+      border-bottom: 2px solid #e91e63;
     }
 
-    /* Input fields */
     .input-group {
       margin-bottom: 12px;
       text-align: left;
     }
     .input-group label {
       display: block;
-      font-size: 14px;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #444;
+      font-size: 13px;
+      margin-bottom: 4px;
     }
     .input-group input {
-      width: 90%;
-      padding: 8px;
-      border: 2px solid #e91e63;
+      width: 100%;
+      padding: 8px;              /* padding कमी केला */
+      border: 1.5px solid #e91e63;
       border-radius: 6px;
-      font-size: 14px;
-      outline: none;
-      display: block;
-      margin: 0 auto;
+      font-size: 13px;
+      box-sizing: border-box;    /* नीट adjust होण्यासाठी */
     }
 
-    /* Buttons */
     .btn {
-      width: 90%;
-      padding: 10px;
+      width: 100%;
+      padding: 9px;
       background: #e91e63;
       color: white;
       border: none;
       border-radius: 6px;
-      font-size: 15px;
-      font-weight: bold;
+      font-size: 14px;
       cursor: pointer;
-      margin: 10px auto;
-      display: block;
+      margin-top: 6px;
     }
     .btn:hover {
       background: #d81b60;
     }
 
-    /* Google Button */
     .google-btn {
-      width: 90%;
-      margin: 12px auto 0;
+      margin-top: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      border: 2px solid #e91e63;
+      border: 1.5px solid #e91e63;
       border-radius: 6px;
-      padding: 10px;
+      padding: 8px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: bold;
-      background: #fff;
     }
     .google-btn img {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
   </style>
 </head>
 <body>
-
   <!-- Logo -->
   <div class="logo">
     <img src="https://raw.githubusercontent.com/amol632/Agrimitra-/refs/heads/main/file_00000000327061fd820b15e52b8c6919.png" alt="AgriMitra Logo">
   </div>
 
-  <!-- Login/Signup Container -->
+  <!-- Login/Signup Form -->
   <div class="container">
     <div class="tabs">
       <button id="loginTab" class="active">🔑 लॉगिन</button>
@@ -140,19 +122,17 @@
     <!-- Login Form -->
     <div id="loginForm">
       <div class="input-group">
-        <label>ई-मेल टाका</label>
+        <label>ई-मेल</label>
         <input type="email" id="loginEmail" placeholder="ई-मेल">
       </div>
       <div class="input-group">
-        <label>पासवर्ड टाका</label>
+        <label>पासवर्ड</label>
         <input type="password" id="loginPassword" placeholder="पासवर्ड">
       </div>
       <button class="btn" id="loginBtn">लॉगिन</button>
-
-      <!-- Google Button -->
-      <div class="google-btn" id="googleLogin">
+      <div class="google-btn" id="googleLoginBtn">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-        Google ने लॉगिन करा
+        Continue with Google
       </div>
     </div>
 
@@ -160,18 +140,18 @@
     <div id="signupForm" style="display:none;">
       <div class="input-group">
         <label>नाव</label>
-        <input type="text" id="signupFName" placeholder="पहिले नाव">
+        <input type="text" id="signupFName" placeholder="नाव">
       </div>
       <div class="input-group">
         <label>आडनाव</label>
         <input type="text" id="signupLName" placeholder="आडनाव">
       </div>
       <div class="input-group">
-        <label>ई-मेल टाका</label>
+        <label>ई-मेल</label>
         <input type="email" id="signupEmail" placeholder="ई-मेल">
       </div>
       <div class="input-group">
-        <label>पासवर्ड टाका</label>
+        <label>पासवर्ड</label>
         <input type="password" id="signupPassword" placeholder="पासवर्ड">
       </div>
       <button class="btn" id="signupBtn">साइनअप</button>
@@ -195,6 +175,7 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
     // Tabs
     const loginTab = document.getElementById("loginTab");
@@ -208,6 +189,7 @@
       loginTab.classList.add("active");
       signupTab.classList.remove("active");
     });
+
     signupTab.addEventListener("click", () => {
       loginForm.style.display = "none";
       signupForm.style.display = "block";
@@ -220,9 +202,8 @@
       const email = document.getElementById("loginEmail").value;
       const password = document.getElementById("loginPassword").value;
       signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          alert("लॉगिन यशस्वी ✅");
-          console.log(userCredential.user);
+        .then(() => {
+          window.location.href = "dashboard.html";
         })
         .catch((error) => {
           alert("त्रुटी: " + error.message);
@@ -234,13 +215,9 @@
       const email = document.getElementById("signupEmail").value;
       const password = document.getElementById("signupPassword").value;
       createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
+        .then(() => {
           alert("साइनअप यशस्वी 🎉");
-          console.log({
-            user: userCredential.user,
-            firstName: document.getElementById("signupFName").value,
-            lastName: document.getElementById("signupLName").value
-          });
+          window.location.href = "dashboard.html";
         })
         .catch((error) => {
           alert("त्रुटी: " + error.message);
@@ -248,12 +225,10 @@
     });
 
     // Google Login
-    document.getElementById("googleLogin").addEventListener("click", () => {
-      const provider = new GoogleAuthProvider();
+    document.getElementById("googleLoginBtn").addEventListener("click", () => {
       signInWithPopup(auth, provider)
-        .then((result) => {
-          alert("Google लॉगिन यशस्वी 🎉");
-          console.log(result.user);
+        .then(() => {
+          window.location.href = "dashboard.html";
         })
         .catch((error) => {
           alert("त्रुटी: " + error.message);
