@@ -5,99 +5,132 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgriMitra Login</title>
   <style>
-  html, body {
-    margin: 0;
-    height: 100%;
-    font-family: Arial, sans-serif;
-  }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fecfef);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      min-height: 100vh;
+      padding-top: 30px;
+    }
 
-  body {
-    background: linear-gradient(135deg, #ff9a9e, #fecfef);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    /* Logo */
+    .logo {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .logo img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: contain;
+    }
 
-  .container {
-    background: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
-    width: 100%;
-    max-width: 320px;
-    text-align: center;
-  }
+    /* Container */
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 6px 20px rgba(0,0,0,0.2);
+      width: 320px;
+      text-align: center;
+    }
 
-  .tabs {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #eee;
-  }
-  .tabs button {
-    background: none;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 6px 10px;
-    cursor: pointer;
-  }
-  .tabs button.active {
-    color: #e91e63;
-    border-bottom: 2px solid #e91e63;
-  }
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+    }
+    .tabs button {
+      flex: 1;
+      background: none;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 8px;
+      cursor: pointer;
+    }
+    .tabs button.active {
+      color: #e91e63;
+      border-bottom: 3px solid #e91e63;
+    }
 
-  .input-group {
-    margin-bottom: 12px;
-    text-align: left;
-  }
-  .input-group label {
-    display: block;
-    font-size: 13px;
-    margin-bottom: 4px;
-  }
-  .input-group input {
-    width: 100%;
-    padding: 8px;
-    border: 2px solid #e91e63;
-    border-radius: 6px;
-    font-size: 14px;
-    box-sizing: border-box;
-  }
+    /* Input fields */
+    .input-group {
+      margin-bottom: 12px;
+      text-align: left;
+    }
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #444;
+    }
+    .input-group input {
+      width: 90%;
+      padding: 8px;
+      border: 2px solid #e91e63;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+      display: block;
+      margin: 0 auto;
+    }
 
-  .btn {
-    width: 100%;
-    padding: 10px;
-    background: #e91e63;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    cursor: pointer;
-  }
-  .btn:hover {
-    background: #d81b60;
-  }
+    /* Buttons */
+    .btn {
+      width: 90%;
+      padding: 10px;
+      background: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 10px auto;
+      display: block;
+    }
+    .btn:hover {
+      background: #d81b60;
+    }
 
-  .google-btn {
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    border: 2px solid #e91e63;
-    border-radius: 6px;
-    padding: 8px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  .google-btn img {
-    width: 18px;
-    height: 18px;
-  }
+    /* Google Button */
+    .google-btn {
+      width: 90%;
+      margin: 12px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 2px solid #e91e63;
+      border-radius: 6px;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      background: #fff;
+    }
+    .google-btn img {
+      width: 20px;
+      height: 20px;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Logo -->
+  <div class="logo">
+    <img src="https://raw.githubusercontent.com/amol632/Agrimitra-/refs/heads/main/file_00000000327061fd820b15e52b8c6919.png" alt="AgriMitra Logo">
+  </div>
+
+  <!-- Login/Signup Container -->
   <div class="container">
     <div class="tabs">
       <button id="loginTab" class="active">🔑 लॉगिन</button>
@@ -115,9 +148,11 @@
         <input type="password" id="loginPassword" placeholder="पासवर्ड">
       </div>
       <button class="btn" id="loginBtn">लॉगिन</button>
+
+      <!-- Google Button -->
       <div class="google-btn" id="googleLogin">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-        Continue with Google
+        Google ने लॉगिन करा
       </div>
     </div>
 
@@ -125,18 +160,18 @@
     <div id="signupForm" style="display:none;">
       <div class="input-group">
         <label>नाव</label>
-        <input type="text" id="signupFirstName" placeholder="तुमचं नाव">
+        <input type="text" id="signupFName" placeholder="पहिले नाव">
       </div>
       <div class="input-group">
         <label>आडनाव</label>
-        <input type="text" id="signupLastName" placeholder="तुमचं आडनाव">
+        <input type="text" id="signupLName" placeholder="आडनाव">
       </div>
       <div class="input-group">
-        <label>ई-मेल</label>
+        <label>ई-मेल टाका</label>
         <input type="email" id="signupEmail" placeholder="ई-मेल">
       </div>
       <div class="input-group">
-        <label>पासवर्ड</label>
+        <label>पासवर्ड टाका</label>
         <input type="password" id="signupPassword" placeholder="पासवर्ड">
       </div>
       <button class="btn" id="signupBtn">साइनअप</button>
@@ -146,7 +181,7 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCiFiazAT4lummi9MJTkDOU_ZhpgeBHXGU",
@@ -196,19 +231,15 @@
 
     // Signup
     document.getElementById("signupBtn").addEventListener("click", () => {
-      const firstName = document.getElementById("signupFirstName").value;
-      const lastName = document.getElementById("signupLastName").value;
       const email = document.getElementById("signupEmail").value;
       const password = document.getElementById("signupPassword").value;
-
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          const user = userCredential.user;
-          // नाव + आडनाव user profile मध्ये टाकतो
-          updateProfile(user, {
-            displayName: firstName + " " + lastName
-          }).then(() => {
-            alert("साइनअप यशस्वी 🎉\nस्वागत आहे, " + firstName + "!");
+          alert("साइनअप यशस्वी 🎉");
+          console.log({
+            user: userCredential.user,
+            firstName: document.getElementById("signupFName").value,
+            lastName: document.getElementById("signupLName").value
           });
         })
         .catch((error) => {
@@ -221,7 +252,7 @@
       const provider = new GoogleAuthProvider();
       signInWithPopup(auth, provider)
         .then((result) => {
-          alert("Google Login यशस्वी 🎉");
+          alert("Google लॉगिन यशस्वी 🎉");
           console.log(result.user);
         })
         .catch((error) => {
