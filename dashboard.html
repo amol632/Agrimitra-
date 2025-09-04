@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriMitra Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fecfef);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: #e91e63;
+      color: white;
+      width: 100%;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    header img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      vertical-align: middle;
+    }
+
+    /* Welcome */
+    .welcome {
+      margin: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Main menu */
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 90%;
+      max-width: 350px;
+    }
+
+    .menu button {
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      transition: 0.3s;
+    }
+    .menu button:hover {
+      transform: scale(1.05);
+    }
+
+    .market { background: #ff6f61; color: white; }
+    .weather { background: #4fc3f7; color: white; }
+    .fertilizer { background: #81c784; color: white; }
+    .logout { background: #9e9e9e; color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <img src="https://raw.githubusercontent.com/amol632/Agrimitra-/refs/heads/main/file_00000000327061fd820b15e52b8c6919.png" alt="Logo">
+    AgriMitra
+  </header>
+
+  <!-- Welcome text -->
+  <div class="welcome">🌾 स्वागत आहे! आपण काय पाहू इच्छिता?</div>
+
+  <!-- Menu -->
+  <div class="menu">
+    <button class="market">📈 मार्केट भाव</button>
+    <button class="weather">☀️ हवामान</button>
+    <button class="fertilizer">💊 खत व औषध सल्ला</button>
+    <button class="logout" onclick="logout()">🚪 लॉगआउट</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCiFiazAT4lummi9MJTkDOU_ZhpgeBHXGU",
+      authDomain: "agrimitra-6b944.firebaseapp.com",
+      projectId: "agrimitra-6b944",
+      storageBucket: "agrimitra-6b944.firebasestorage.app",
+      messagingSenderId: "190603132023",
+      appId: "1:190603132023:web:dc3f122284891e180f9a72",
+      measurementId: "G-7MXB81G9PW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Logout function
+    function logout() {
+      signOut(auth).then(() => {
+        alert("लॉगआउट यशस्वी ✅");
+        window.location.href = "index.html"; // परत लॉगिन पेजवर
+      }).catch((error) => {
+        alert("त्रुटी: " + error.message);
+      });
+    }
+    window.logout = logout; // HTML onclick साठी
+  </script>
+
+</body>
+</html>
