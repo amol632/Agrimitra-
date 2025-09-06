@@ -3,94 +3,124 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriMitra हवामान</title>
+  <title>हवामान - AgriMitra</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #ff9a9e, #fecfef);
       margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      color: #333;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
     }
     header {
-      background: #e91e63;
+      background: #4fc3f7;
       color: white;
-      text-align: center;
+      width: 100%;
       padding: 15px;
       font-size: 22px;
       font-weight: bold;
+      border-radius: 0 0 15px 15px;
+      margin-bottom: 20px;
     }
-    .container {
-      padding: 20px;
+    .city {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #222;
     }
-    table {
+    .forecast {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      background: #fff;
+      max-width: 800px;
+    }
+    .day {
+      background: white;
+      padding: 15px;
       border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
     }
-    table, th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
+    .day h3 {
+      margin: 5px 0;
+      font-size: 18px;
+      color: #4fc3f7;
     }
-    th {
-      background: #f8bbd0;
+    .day img {
+      width: 50px;
     }
   </style>
 </head>
 <body>
-  <header>🌦️ AgriMitra Live हवामान</header>
-  <div class="container">
-    <table>
-      <thead>
-        <tr>
-          <th>📅 तारीख</th>
-          <th>🌡️ तापमान</th>
-          <th>☁️ स्थिती</th>
-        </tr>
-      </thead>
-      <tbody id="weatherData">
-        <tr>
-          <td colspan="3">⏳ हवामान मिळवत आहोत...</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <header>🌦️ आपल्या ठिकाणाचे हवामान</header>
+  <div id="city" class="city">📍 शहर शोधत आहे...</div>
+  <div id="forecast" class="forecast">⏳ लोकेशन घेतले जात आहे...</div>
 
   <script>
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        const apiKey = "c74394809706b729a3056c4d048de471"; // 🔑 तुझा API key
+    const apiKey = "c74394809706b729a3056c4d048de471";
 
-        fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=mr`)
-          .then(res => res.json())
-          .then(data => {
-            const weatherData = document.getElementById("weatherData");
-            weatherData.innerHTML = "";
-            data.list.slice(0, 5).forEach(day => {
-              const date = new Date(day.dt * 1000).toLocaleDateString("mr-IN");
-              const temp = `${day.main.temp}°C`;
-              const condition = day.weather[0].description;
-              weatherData.innerHTML += `
-                <tr>
-                  <td>${date}</td>
-                  <td>${temp}</td>
-                  <td>${condition}</td>
-                </tr>`;
-            });
-          })
-          .catch(() => {
-            document.getElementById("weatherData").innerHTML =
-              `<tr><td colspan="3">❌ हवामान माहिती मिळाली नाही</td></tr>`;
-          });
-      });
+    async function getWeather(lat, lon) {
+      try {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=mr`
+        );
+        const data = await response.json();
+
+        // शहराचे नाव वर दाखवणे
+        document.getElementById("city").innerText = "📍 " + data.city.name + ", " + data.city.country;
+
+        let forecastHTML = "";
+        const dailyData = {};
+
+        // प्रत्येक दिवसासाठी एकच रेकॉर्ड निवडणे
+        data.list.forEach(item => {
+          const date = item.dt_txt.split(" ")[0];
+          if (!dailyData[date]) {
+            dailyData[date] = item;
+          }
+        });
+
+        Object.keys(dailyData).slice(0, 5).forEach(date => {
+          const dayData = dailyData[date];
+          forecastHTML += `
+            <div class="day">
+              <h3>${new Date(date).toLocaleDateString("mr-IN", { weekday: "long", day: "numeric", month: "long" })}</h3>
+              <img src="https://openweathermap.org/img/wn/${dayData.weather[0].icon}@2x.png" alt="Weather">
+              <p>🌡️ तापमान: ${dayData.main.temp}°C</p>
+              <p>🌥️ स्थिती: ${dayData.weather[0].description}</p>
+              <p>💧 आर्द्रता: ${dayData.main.humidity}%</p>
+            </div>
+          `;
+        });
+
+        document.getElementById("forecast").innerHTML = forecastHTML;
+
+      } catch (error) {
+        document.getElementById("forecast").innerHTML = "⚠️ हवामान माहिती मिळू शकली नाही.";
+        console.error(error);
+      }
+    }
+
+    // GPS लोकेशन घेणे
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          document.getElementById("forecast").innerHTML = "⏳ हवामान माहिती मिळवत आहे...";
+          getWeather(lat, lon);
+        },
+        (error) => {
+          document.getElementById("forecast").innerHTML = "⚠️ लोकेशन मिळाले नाही.";
+        }
+      );
     } else {
-      alert("❌ तुमच्या डिव्हाईसवर लोकेशन सपोर्ट नाही");
+      document.getElementById("forecast").innerHTML = "⚠️ तुमच्या ब्राउझरमध्ये GPS सपोर्ट नाही.";
     }
   </script>
 </body>
