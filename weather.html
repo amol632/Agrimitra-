@@ -8,58 +8,129 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      background: linear-gradient(135deg, #ff9a9e, #fecfef);
       color: #333;
-      text-align: center;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px;
     }
+
     header {
-      background: #4fc3f7;
+      background: #e91e63;
       color: white;
       width: 100%;
+      text-align: center;
       padding: 15px;
       font-size: 22px;
       font-weight: bold;
       border-radius: 0 0 15px 15px;
       margin-bottom: 20px;
+      position: relative;
     }
+
+    /* Back Button */
+    .back-btn {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      color: #e91e63;
+      border: none;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .back-btn:hover {
+      background: #f8bbd0;
+    }
+
     .city {
       font-size: 20px;
       font-weight: bold;
       margin-bottom: 15px;
       color: #222;
     }
-    .forecast {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
+
+    /* आजचा हवामान कार्ड */
+    .today {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 400px;
       width: 100%;
-      max-width: 800px;
+      margin-bottom: 25px;
     }
+
+    .today h2 {
+      margin: 5px 0;
+      font-size: 22px;
+      color: #e91e63;
+    }
+
+    .today img {
+      width: 80px;
+    }
+
+    .today p {
+      font-size: 18px;
+      margin: 6px 0;
+    }
+
+    /* पुढचे दिवस */
+    .forecast {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      width: 100%;
+      max-width: 900px;
+    }
+
     .day {
       background: white;
       padding: 15px;
-      border-radius: 10px;
+      border-radius: 12px;
       box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      text-align: center;
+      min-width: 150px;
+      flex: 0 0 auto;
     }
+
     .day h3 {
       margin: 5px 0;
-      font-size: 18px;
-      color: #4fc3f7;
+      font-size: 16px;
+      color: #e91e63;
     }
+
     .day img {
       width: 50px;
+    }
+
+    .day p {
+      margin: 4px 0;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <header>🌦️ आपल्या ठिकाणाचे हवामान</header>
+  <header>
+    <button class="back-btn" onclick="goBack()">🔙 डॅशबोर्ड</button>
+    🌦️ हवामान माहिती
+  </header>
+
   <div id="city" class="city">📍 शहर शोधत आहे...</div>
-  <div id="forecast" class="forecast">⏳ लोकेशन घेतले जात आहे...</div>
+
+  <div id="today" class="today">⏳ आजचे हवामान मिळवत आहे...</div>
+
+  <h2 style="color:#e91e63;">पुढील 5 दिवस</h2>
+  <div id="forecast" class="forecast">⏳ माहिती मिळवत आहे...</div>
 
   <script>
     const apiKey = "c74394809706b729a3056c4d048de471";
@@ -71,13 +142,23 @@
         );
         const data = await response.json();
 
-        // शहराचे नाव वर दाखवणे
+        // शहराचे नाव दाखवणे
         document.getElementById("city").innerText = "📍 " + data.city.name + ", " + data.city.country;
 
+        // आजचा डेटा
+        const todayData = data.list[0];
+        document.getElementById("today").innerHTML = `
+          <h2>${new Date(todayData.dt_txt).toLocaleDateString("mr-IN", { weekday: "long", day: "numeric", month: "long" })}</h2>
+          <img src="https://openweathermap.org/img/wn/${todayData.weather[0].icon}@2x.png" alt="Weather">
+          <p>🌡️ तापमान: ${todayData.main.temp}°C</p>
+          <p>🌥️ स्थिती: ${todayData.weather[0].description}</p>
+          <p>💧 आर्द्रता: ${todayData.main.humidity}%</p>
+        `;
+
+        // पुढचे 5 दिवस
         let forecastHTML = "";
         const dailyData = {};
 
-        // प्रत्येक दिवसासाठी एकच रेकॉर्ड निवडणे
         data.list.forEach(item => {
           const date = item.dt_txt.split(" ")[0];
           if (!dailyData[date]) {
@@ -85,15 +166,14 @@
           }
         });
 
-        Object.keys(dailyData).slice(0, 5).forEach(date => {
+        Object.keys(dailyData).slice(1, 6).forEach(date => {
           const dayData = dailyData[date];
           forecastHTML += `
             <div class="day">
-              <h3>${new Date(date).toLocaleDateString("mr-IN", { weekday: "long", day: "numeric", month: "long" })}</h3>
+              <h3>${new Date(date).toLocaleDateString("mr-IN", { weekday: "short", day: "numeric", month: "short" })}</h3>
               <img src="https://openweathermap.org/img/wn/${dayData.weather[0].icon}@2x.png" alt="Weather">
-              <p>🌡️ तापमान: ${dayData.main.temp}°C</p>
-              <p>🌥️ स्थिती: ${dayData.weather[0].description}</p>
-              <p>💧 आर्द्रता: ${dayData.main.humidity}%</p>
+              <p>🌡️ ${dayData.main.temp}°C</p>
+              <p>${dayData.weather[0].description}</p>
             </div>
           `;
         });
@@ -101,7 +181,7 @@
         document.getElementById("forecast").innerHTML = forecastHTML;
 
       } catch (error) {
-        document.getElementById("forecast").innerHTML = "⚠️ हवामान माहिती मिळू शकली नाही.";
+        document.getElementById("today").innerHTML = "⚠️ हवामान माहिती मिळू शकली नाही.";
         console.error(error);
       }
     }
@@ -112,15 +192,18 @@
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          document.getElementById("forecast").innerHTML = "⏳ हवामान माहिती मिळवत आहे...";
           getWeather(lat, lon);
         },
         (error) => {
-          document.getElementById("forecast").innerHTML = "⚠️ लोकेशन मिळाले नाही.";
+          document.getElementById("today").innerHTML = "⚠️ लोकेशन मिळाले नाही.";
         }
       );
     } else {
-      document.getElementById("forecast").innerHTML = "⚠️ तुमच्या ब्राउझरमध्ये GPS सपोर्ट नाही.";
+      document.getElementById("today").innerHTML = "⚠️ तुमच्या ब्राउझरमध्ये GPS सपोर्ट नाही.";
+    }
+
+    function goBack() {
+      window.location.href = "dashboard.html";
     }
   </script>
 </body>
