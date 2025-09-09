@@ -6,161 +6,96 @@
   <title>मार्केट भाव - AgriMitra</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #ff9a9e, #fecfef);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    header {
-      background: #e91e63;
-      color: white;
-      width: 100%;
-      padding: 15px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-    }
-
-    .form-container {
-      background: #fff;
+      margin: 0;
       padding: 20px;
-      margin: 20px;
-      border-radius: 12px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
-      width: 90%;
-      max-width: 400px;
+      text-align: center;
     }
-
-    label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-
+    h2 { color: #e91e63; }
     select, button {
-      width: 100%;
       padding: 10px;
-      margin-top: 8px;
-      border-radius: 6px;
-      border: 2px solid #e91e63;
+      margin: 10px;
+      border-radius: 8px;
+      border: 1px solid #e91e63;
       font-size: 16px;
     }
-
-    button {
-      background: #e91e63;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background: #d81b60;
-    }
-
-    .results {
-      margin: 20px;
-      display: grid;
-      gap: 15px;
-      width: 90%;
-      max-width: 600px;
-    }
-
     .card {
-      background: white;
+      background: #fff;
+      border-radius: 12px;
       padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+      margin: 10px auto;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      max-width: 400px;
+      text-align: left;
     }
-
-    .card h3 {
-      margin: 0 0 10px;
-      color: #e91e63;
-    }
-
-    .card p {
-      margin: 5px 0;
-      font-size: 15px;
-    }
+    .card h3 { margin: 0; color: #e91e63; }
+    .card p { margin: 5px 0; }
   </style>
 </head>
 <body>
-  <header>📈 महाराष्ट्र मार्केट भाव</header>
+  <h2>📈 जिल्हा निवडा आणि भाजीपाल्याचे भाव पहा</h2>
+  
+  <select id="district">
+    <option value="">-- जिल्हा निवडा --</option>
+    <option value="Ahmednagar">अहमदनगर</option>
+    <option value="Akola">अकोला</option>
+    <option value="Amravati">अमरावती</option>
+    <option value="Aurangabad">औरंगाबाद</option>
+    <option value="Beed">बीड</option>
+    <option value="Bhandara">भंडारा</option>
+    <option value="Buldhana">बुलढाणा</option>
+    <option value="Chandrapur">चंद्रपूर</option>
+    <option value="Dhule">धुळे</option>
+    <option value="Gadchiroli">गडचिरोली</option>
+    <option value="Gondia">गोंदिया</option>
+    <option value="Hingoli">हिंगोली</option>
+    <option value="Jalgaon">जळगाव</option>
+    <option value="Jalna">जालना</option>
+    <option value="Kolhapur">कोल्हापूर</option>
+    <option value="Latur">लातूर</option>
+    <option value="Mumbai">मुंबई</option>
+    <option value="Nagpur">नागपूर</option>
+    <option value="Nanded">नांदेड</option>
+    <option value="Nandurbar">नंदुरबार</option>
+    <option value="Nashik">नाशिक</option>
+    <option value="Osmanabad">उस्मानाबाद</option>
+    <option value="Palghar">पालघर</option>
+    <option value="Parbhani">परभणी</option>
+    <option value="Pune">पुणे</option>
+    <option value="Raigad">रायगड</option>
+    <option value="Ratnagiri">रत्नागिरी</option>
+    <option value="Sangli">सांगली</option>
+    <option value="Satara">सातारा</option>
+    <option value="Sindhudurg">सिंधुदुर्ग</option>
+    <option value="Solapur">सोलापूर</option>
+    <option value="Thane">ठाणे</option>
+    <option value="Wardha">वर्धा</option>
+    <option value="Washim">वाशीम</option>
+    <option value="Yavatmal">यवतमाळ</option>
+  </select>
 
-  <div class="form-container">
-    <label for="district">जिल्हा निवडा:</label>
-    <select id="district">
-      <option value="Ahmednagar">Ahmednagar</option>
-      <option value="Akola">Akola</option>
-      <option value="Amravati">Amravati</option>
-      <option value="Aurangabad">Aurangabad</option>
-      <option value="Beed">Beed</option>
-      <option value="Bhandara">Bhandara</option>
-      <option value="Buldhana">Buldhana</option>
-      <option value="Chandrapur">Chandrapur</option>
-      <option value="Dhule">Dhule</option>
-      <option value="Gadchiroli">Gadchiroli</option>
-      <option value="Gondia">Gondia</option>
-      <option value="Hingoli">Hingoli</option>
-      <option value="Jalgaon">Jalgaon</option>
-      <option value="Jalna">Jalna</option>
-      <option value="Kolhapur">Kolhapur</option>
-      <option value="Latur">Latur</option>
-      <option value="Mumbai">Mumbai</option>
-      <option value="Nagpur">Nagpur</option>
-      <option value="Nanded">Nanded</option>
-      <option value="Nandurbar">Nandurbar</option>
-      <option value="Nashik">Nashik</option>
-      <option value="Osmanabad">Osmanabad</option>
-      <option value="Palghar">Palghar</option>
-      <option value="Parbhani">Parbhani</option>
-      <option value="Pune">Pune</option>
-      <option value="Raigad">Raigad</option>
-      <option value="Ratnagiri">Ratnagiri</option>
-      <option value="Sangli">Sangli</option>
-      <option value="Satara">Satara</option>
-      <option value="Sindhudurg">Sindhudurg</option>
-      <option value="Solapur">Solapur</option>
-      <option value="Thane">Thane</option>
-      <option value="Wardha">Wardha</option>
-      <option value="Washim">Washim</option>
-      <option value="Yavatmal">Yavatmal</option>
-    </select>
+  <button onclick="getPrices()">भाव पहा</button>
 
-    <label for="commodity">पिक/भाजी निवडा:</label>
-    <select id="commodity">
-      <option value="Tomato">Tomato (टोमॅटो)</option>
-      <option value="Onion">Onion (कांदा)</option>
-      <option value="Potato">Potato (बटाटा)</option>
-      <option value="Brinjal">Brinjal (वांगी)</option>
-      <option value="Cabbage">Cabbage (कोबी)</option>
-      <option value="Cauliflower">Cauliflower (फुलकोबी)</option>
-      <option value="Green Chilli">Green Chilli (मिरची)</option>
-      <option value="Spinach">Spinach (पालक)</option>
-    </select>
-
-    <button onclick="getMarketRates()">🔍 भाव पाहा</button>
-  </div>
-
-  <div class="results" id="results"></div>
+  <div id="results"></div>
 
   <script>
     const API_KEY = "579b464db66ec23bdd0000019f0ca214d5c34d7476b4ffb1b25324e1";
 
-    async function getMarketRates() {
+    async function getPrices() {
       const district = document.getElementById("district").value;
-      const commodity = document.getElementById("commodity").value;
       const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = "⏳ डेटा आणत आहोत...";
+      resultsDiv.innerHTML = "⏳ डेटा लोड होत आहे...";
 
-      const url = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${API_KEY}&format=json&filters[district]=${district}&filters[commodity]=${commodity}`;
+      if (!district) {
+        resultsDiv.innerHTML = "❗ कृपया जिल्हा निवडा.";
+        return;
+      }
 
       try {
-        const res = await fetch(url);
-        const data = await res.json();
+        const url = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${API_KEY}&format=json&filters[district]=${district}`;
+        const response = await fetch(url);
+        const data = await response.json();
 
         if (!data.records || data.records.length === 0) {
           resultsDiv.innerHTML = "🚫 डाटा उपलब्ध नाही.";
@@ -172,17 +107,18 @@
           const card = document.createElement("div");
           card.className = "card";
           card.innerHTML = `
-            <h3>${item.commodity} - ${item.variety || "N/A"}</h3>
+            <h3>${item.commodity}</h3>
             <p><b>बाजार:</b> ${item.market}</p>
-            <p><b>दिनांक:</b> ${item.arrival_date}</p>
-            <p>🟢 किमान भाव: ₹${item.min_price}</p>
-            <p>🔴 कमाल भाव: ₹${item.max_price}</p>
-            <p>⭐ मध्यम भाव: ₹${item.modal_price}</p>
+            <p><b>किमान भाव:</b> ₹${item.min_price}</p>
+            <p><b>कमाल भाव:</b> ₹${item.max_price}</p>
+            <p><b>सरासरी भाव:</b> ₹${item.modal_price}</p>
+            <p><b>तारीख:</b> ${item.arrival_date}</p>
           `;
           resultsDiv.appendChild(card);
         });
+
       } catch (error) {
-        resultsDiv.innerHTML = "⚠️ त्रुटी आली: " + error.message;
+        resultsDiv.innerHTML = "⚠️ त्रुटी: " + error.message;
       }
     }
   </script>
