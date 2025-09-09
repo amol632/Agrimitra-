@@ -3,180 +3,136 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriMitra - मार्केट भाव</title>
+  <title>Market Prices</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #ff9a9e, #fecfef);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    header {
-      background: #e91e63;
-      color: white;
-      width: 100%;
-      text-align: center;
-      padding: 15px;
-      font-size: 22px;
-      font-weight: bold;
-    }
-    header img {
-      width: 50px;
-      height: 50px;
-      vertical-align: middle;
-      border-radius: 50%;
-    }
-
-    .container {
-      margin-top: 20px;
-      background: #fff;
+      background-color: #ffe6f0;
+      margin: 0;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
     }
-
-    select, button {
-      width: 100%;
+    h1 {
+      text-align: center;
+      color: #d63384;
+    }
+    .form-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    select {
       padding: 10px;
-      margin-top: 10px;
       border-radius: 8px;
-      border: 2px solid #e91e63;
+      border: 1px solid #d63384;
+      margin: 5px;
       font-size: 16px;
     }
-
-    button {
-      background: #e91e63;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
     }
-
-    button:hover {
-      background: #d81b60;
-    }
-
-    .results {
-      margin-top: 20px;
-    }
-
     .card {
-      background: #ffe6f0;
-      border: 2px solid #e91e63;
-      border-radius: 10px;
+      background: white;
+      border-radius: 15px;
       padding: 15px;
-      margin: 10px 0;
-      text-align: left;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+      border-left: 5px solid #d63384;
     }
     .card h3 {
-      margin: 0 0 5px;
-      color: #e91e63;
+      margin: 0;
+      color: #d63384;
     }
     .card p {
-      margin: 3px 0;
+      margin: 5px 0;
       font-size: 14px;
     }
   </style>
 </head>
 <body>
+  <h1>मार्केट भाव (Live)</h1>
 
-  <header>
-    <img src="https://raw.githubusercontent.com/amol632/Agrimitra-/refs/heads/main/file_00000000327061fd820b15e52b8c6919.png" alt="Logo">
-    AgriMitra - मार्केट भाव
-  </header>
-
-  <div class="container">
-    <h2>📊 मार्केट भाव शोधा</h2>
-    <select id="district">
-      <option value="">जिल्हा निवडा</option>
-      <option value="Pune">Pune</option>
-      <option value="Nagpur">Nagpur</option>
-      <option value="Nashik">Nashik</option>
+  <div class="form-container">
+    <label for="district">जिल्हा निवडा:</label>
+    <select id="district" onchange="getPrices()">
+      <option value="">-- जिल्हा निवडा --</option>
+      <option value="Ahmednagar">Ahmednagar</option>
+      <option value="Akola">Akola</option>
+      <option value="Amravati">Amravati</option>
       <option value="Aurangabad">Aurangabad</option>
+      <option value="Beed">Beed</option>
+      <option value="Bhandara">Bhandara</option>
+      <option value="Buldhana">Buldhana</option>
+      <option value="Chandrapur">Chandrapur</option>
+      <option value="Dhule">Dhule</option>
+      <option value="Gadchiroli">Gadchiroli</option>
+      <option value="Gondia">Gondia</option>
+      <option value="Hingoli">Hingoli</option>
+      <option value="Jalgaon">Jalgaon</option>
+      <option value="Jalna">Jalna</option>
+      <option value="Kolhapur">Kolhapur</option>
+      <option value="Latur">Latur</option>
       <option value="Mumbai">Mumbai</option>
+      <option value="Nagpur">Nagpur</option>
+      <option value="Nanded">Nanded</option>
+      <option value="Nandurbar">Nandurbar</option>
+      <option value="Nashik">Nashik</option>
+      <option value="Osmanabad">Osmanabad</option>
+      <option value="Palghar">Palghar</option>
+      <option value="Parbhani">Parbhani</option>
+      <option value="Pune">Pune</option>
+      <option value="Raigad">Raigad</option>
+      <option value="Ratnagiri">Ratnagiri</option>
+      <option value="Sangli">Sangli</option>
+      <option value="Satara">Satara</option>
+      <option value="Sindhudurg">Sindhudurg</option>
+      <option value="Solapur">Solapur</option>
+      <option value="Thane">Thane</option>
+      <option value="Wardha">Wardha</option>
+      <option value="Washim">Washim</option>
+      <option value="Yavatmal">Yavatmal</option>
     </select>
-
-    <select id="market">
-      <option value="">मार्केट निवडा</option>
-    </select>
-
-    <button onclick="fetchRates()">भाव पाहा</button>
-
-    <div class="results" id="results"></div>
   </div>
 
+  <div id="results" class="cards"></div>
+
   <script>
-    const apiKey = "579b464db66ec23bdd0000019f0ca214d5c34d7476b4ffb1b25324e1";
-
-    // Market भरायचे (demo साठी manually)
-    const marketData = {
-      Pune: ["Pune", "Baramati", "Daund"],
-      Nagpur: ["Nagpur", "Kamptee"],
-      Nashik: ["Nashik", "Lasalgaon"],
-      Aurangabad: ["Aurangabad", "Paithan"],
-      Mumbai: ["Mumbai", "Vashi"]
-    };
-
-    document.getElementById("district").addEventListener("change", function() {
-      let dist = this.value;
-      let marketSelect = document.getElementById("market");
-      marketSelect.innerHTML = '<option value="">मार्केट निवडा</option>';
-      if (marketData[dist]) {
-        marketData[dist].forEach(m => {
-          let opt = document.createElement("option");
-          opt.value = m;
-          opt.innerText = m;
-          marketSelect.appendChild(opt);
-        });
-      }
-    });
-
-    async function fetchRates() {
+    async function getPrices() {
       const district = document.getElementById("district").value;
-      const market = document.getElementById("market").value;
-      const resultsDiv = document.getElementById("results");
+      if (!district) return;
 
-      if (!district || !market) {
-        alert("कृपया जिल्हा आणि मार्केट निवडा");
-        return;
-      }
+      const apiKey = "579b464db66ec23bdd0000019f0ca214d5c34d7476b4ffb1b25324e1";
+      const url = `https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=${apiKey}&format=json&limit=20&filters[State]=Maharashtra&filters[District]=${district}`;
 
-      resultsDiv.innerHTML = "<p>⌛ डेटा लोड होत आहे...</p>";
+      const resDiv = document.getElementById("results");
+      resDiv.innerHTML = "<p>लोड होत आहे...</p>";
 
       try {
-        const response = await fetch(
-          `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${apiKey}&format=json&limit=10&filters[District]=${district}&filters[Market]=${market}`
-        );
+        const response = await fetch(url);
         const data = await response.json();
 
-        if (data.records && data.records.length > 0) {
-          resultsDiv.innerHTML = "";
-          data.records.forEach(item => {
-            const card = document.createElement("div");
-            card.className = "card";
-            card.innerHTML = `
-              <h3>${item.commodity}</h3>
-              <p><b>किमान भाव:</b> ₹${item.min_price}</p>
-              <p><b>जास्तीत जास्त भाव:</b> ₹${item.max_price}</p>
-              <p><b>सरासरी भाव:</b> ₹${item.modal_price}</p>
-            `;
-            resultsDiv.appendChild(card);
-          });
-        } else {
-          resultsDiv.innerHTML = "<p>❌ डेटा उपलब्ध नाही</p>";
+        if (!data.records || data.records.length === 0) {
+          resDiv.innerHTML = "<p>डाटा उपलब्ध नाही 🚫</p>";
+          return;
         }
+
+        resDiv.innerHTML = "";
+        data.records.forEach(item => {
+          const card = `
+            <div class="card">
+              <h3>${item.commodity} (${item.variety})</h3>
+              <p><b>किमान भाव:</b> ₹${item.min_price}</p>
+              <p><b>कमाल भाव:</b> ₹${item.max_price}</p>
+              <p><b>सरासरी भाव:</b> ₹${item.modal_price}</p>
+              <p><b>तारीख:</b> ${item.arrival_date}</p>
+            </div>
+          `;
+          resDiv.innerHTML += card;
+        });
       } catch (error) {
-        resultsDiv.innerHTML = "<p>⚠️ त्रुटी: " + error.message + "</p>";
+        resDiv.innerHTML = "<p>❌ काहीतरी चुकीचं झालं...</p>";
+        console.error(error);
       }
     }
   </script>
-
 </body>
 </html>
