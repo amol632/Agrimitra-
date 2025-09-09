@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>खत व औषध सल्ला - AgriMitra</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fecfef);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      background: #e91e63;
+      color: white;
+      width: 100%;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    header img {
+      width: 40px;
+      height: 40px;
+      vertical-align: middle;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .container {
+      margin-top: 30px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e91e63;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #ffe6f0;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: #e91e63;
+    }
+    .card p {
+      margin: 8px 0;
+      font-size: 15px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://raw.githubusercontent.com/amol632/Agrimitra-/refs/heads/main/file_00000000327061fd820b15e52b8c6919.png" alt="Logo">
+    खत व औषध सल्ला
+  </header>
+
+  <div class="container">
+    <select id="cropSelect">
+      <option value="">-- पिक निवडा --</option>
+      <option value="rice">भात</option>
+      <option value="wheat">गहू</option>
+      <option value="cotton">कापूस</option>
+      <option value="sugarcane">ऊस</option>
+      <option value="soybean">सोयाबीन</option>
+      <option value="onion">कांदा</option>
+      <option value="tomato">टोमॅटो</option>
+    </select>
+
+    <div id="adviceCard" class="card" style="display:none;">
+      <h3 id="cropName"></h3>
+      <p><strong>💊 खत:</strong> <span id="fertilizer"></span></p>
+      <p><strong>🧪 औषध:</strong> <span id="pesticide"></span></p>
+      <p><strong>ℹ️ सूचना:</strong> <span id="note"></span></p>
+    </div>
+  </div>
+
+  <script>
+    const adviceData = {
+      rice: {
+        name: "भात",
+        fertilizer: "युरिया 60kg/एकर, DAP 40kg/एकर",
+        pesticide: "Blast रोगासाठी: Tricyclazole 2g/L पाणी",
+        note: "पाणी नेहमी उभं ठेवावं."
+      },
+      wheat: {
+        name: "गहू",
+        fertilizer: "युरिया 50kg/एकर, DAP 40kg/एकर",
+        pesticide: "गंज रोगासाठी: Propiconazole 1ml/L पाणी",
+        note: "पेरणीनंतर 25-30 दिवसांनी टॉप ड्रेसिंग करावे."
+      },
+      cotton: {
+        name: "कापूस",
+        fertilizer: "NPK 20:20:20 - 50kg/एकर",
+        pesticide: "बोंड अळी: Spinosad 2ml/L पाणी",
+        note: "फवारणी सकाळी/संध्याकाळी करावी."
+      },
+      sugarcane: {
+        name: "ऊस",
+        fertilizer: "युरिया 100kg + DAP 50kg/एकर",
+        pesticide: "कोळी: Chlorpyriphos 2ml/L पाणी",
+        note: "फवारणीनंतर जनावरे शेतात सोडू नयेत."
+      },
+      soybean: {
+        name: "सोयाबीन",
+        fertilizer: "DAP 25kg/एकर, युरिया 30kg/एकर",
+        pesticide: "अळी साठी: Lambda-cyhalothrin 1ml/L पाणी",
+        note: "फुलोऱ्याच्या वेळी विशेष काळजी घ्या."
+      },
+      onion: {
+        name: "कांदा",
+        fertilizer: "युरिया 30kg/एकर, DAP 20kg/एकर",
+        pesticide: "कांदा थ्रिप्स साठी: Imidacloprid 0.5ml/L",
+        note: "फवारणी दर 10-12 दिवसांनी करावी."
+      },
+      tomato: {
+        name: "टोमॅटो",
+        fertilizer: "NPK 10:26:26 - 40kg/एकर",
+        pesticide: "फळकुज रोगासाठी: Copper oxychloride 3g/L पाणी",
+        note: "जमीन नेहमी ओलसर ठेवावी."
+      }
+    };
+
+    document.getElementById("cropSelect").addEventListener("change", function () {
+      const crop = this.value;
+      const card = document.getElementById("adviceCard");
+
+      if (crop && adviceData[crop]) {
+        document.getElementById("cropName").innerText = adviceData[crop].name;
+        document.getElementById("fertilizer").innerText = adviceData[crop].fertilizer;
+        document.getElementById("pesticide").innerText = adviceData[crop].pesticide;
+        document.getElementById("note").innerText = adviceData[crop].note;
+        card.style.display = "block";
+      } else {
+        card.style.display = "none";
+      }
+    });
+  </script>
+
+</body>
+</html>
