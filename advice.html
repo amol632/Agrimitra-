@@ -68,6 +68,16 @@
       font-size: 15px;
       color: #333;
     }
+
+    a {
+      color: #e91e63;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -91,8 +101,8 @@
 
     <div id="adviceCard" class="card" style="display:none;">
       <h3 id="cropName"></h3>
-      <p><strong>💊 खत:</strong> <span id="fertilizer"></span></p>
-      <p><strong>🧪 औषध:</strong> <span id="pesticide"></span></p>
+      <p><strong>💊 <a href="fertilizer.html" id="fertilizerLink">खत:</a></strong> <span id="fertilizer"></span></p>
+      <p><strong>🧪 <a href="pesticide.html" id="pesticideLink">औषध:</a></strong> <span id="pesticide"></span></p>
       <p><strong>ℹ️ सूचना:</strong> <span id="note"></span></p>
     </div>
   </div>
@@ -152,6 +162,11 @@
         document.getElementById("fertilizer").innerText = adviceData[crop].fertilizer;
         document.getElementById("pesticide").innerText = adviceData[crop].pesticide;
         document.getElementById("note").innerText = adviceData[crop].note;
+
+        // लिंक मध्ये पिकाचं नाव पाठवतो
+        document.getElementById("fertilizerLink").href = "fertilizer.html?crop=" + crop;
+        document.getElementById("pesticideLink").href = "pesticide.html?crop=" + crop;
+
         card.style.display = "block";
       } else {
         card.style.display = "none";
