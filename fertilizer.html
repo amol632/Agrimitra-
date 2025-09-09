@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>खत सल्ला - AgriMitra</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fecfef);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      background: #e91e63;
+      color: white;
+      width: 100%;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    header img {
+      width: 40px;
+      height: 40px;
+      vertical-align: middle;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .container {
+      margin-top: 30px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h2 {
+      color: #e91e63;
+      margin-bottom: 15px;
+    }
+    p {
+      font-size: 16px;
+      margin: 10px 0;
+      color: #333;
+    }
+    a {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #e91e63;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://raw.githubusercontent.com/amol632/Agrimitra-/refs/heads/main/file_00000000327061fd820b15e52b8c6919.png" alt="Logo">
+    खत सल्ला
+  </header>
+
+  <div class="container">
+    <h2 id="cropName"></h2>
+    <p id="fertilizer"></p>
+    <a href="advice.html">⬅️ परत जा</a>
+  </div>
+
+  <script>
+    const adviceData = {
+      rice: { name: "भात", fertilizer: "युरिया 60kg/एकर, DAP 40kg/एकर" },
+      wheat: { name: "गहू", fertilizer: "युरिया 50kg/एकर, DAP 40kg/एकर" },
+      cotton: { name: "कापूस", fertilizer: "NPK 20:20:20 - 50kg/एकर" },
+      sugarcane: { name: "ऊस", fertilizer: "युरिया 100kg + DAP 50kg/एकर" },
+      soybean: { name: "सोयाबीन", fertilizer: "DAP 25kg/एकर, युरिया 30kg/एकर" },
+      onion: { name: "कांदा", fertilizer: "युरिया 30kg/एकर, DAP 20kg/एकर" },
+      tomato: { name: "टोमॅटो", fertilizer: "NPK 10:26:26 - 40kg/एकर" }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const crop = params.get("crop");
+
+    if (crop && adviceData[crop]) {
+      document.getElementById("cropName").innerText = adviceData[crop].name;
+      document.getElementById("fertilizer").innerText = "💊 खत: " + adviceData[crop].fertilizer;
+    } else {
+      document.getElementById("cropName").innerText = "पिक निवडलेले नाही 🚫";
+    }
+  </script>
+</body>
+</html>
