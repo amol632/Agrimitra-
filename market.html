@@ -1,60 +1,30 @@
 <!DOCTYPE html>
 <html lang="mr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Market Prices</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #ffe6f0;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #d63384;
-    }
-    .form-container {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #d63384;
-      margin: 5px;
-      font-size: 16px;
-    }
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-    }
-    .card {
-      background: white;
-      border-radius: 15px;
-      padding: 15px;
-      box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
-      border-left: 5px solid #d63384;
-    }
-    .card h3 {
-      margin: 0;
-      color: #d63384;
-    }
-    .card p {
-      margin: 5px 0;
-      font-size: 14px;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AgriMitra — Market Prices (Live)</title>
+<style>
+  body{font-family:Arial, sans-serif;background:linear-gradient(135deg,#ff9a9e,#fecfef);margin:0;padding:20px}
+  h1{text-align:center;color:#d63384;margin:0 0 18px}
+  .form-container{text-align:center;margin-bottom:18px}
+  select{padding:10px;border-radius:8px;border:1px solid #d63384;font-size:16px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:12px}
+  .card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 6px 12px rgba(0,0,0,0.12);border-left:6px solid #d63384}
+  .card h3{margin:0 0 6px;color:#d63384;font-size:18px}
+  .card p{margin:4px 0;color:#333;font-size:14px}
+  .info{ text-align:center;color:#555;margin-top:8px }
+  .small{font-size:13px;color:#666}
+</style>
 </head>
 <body>
-  <h1>मार्केट भाव (Live)</h1>
+  <h1>AgriMitra — मार्केट भाव (Live)</h1>
 
   <div class="form-container">
-    <label for="district">जिल्हा निवडा:</label>
+    <label for="district">जिल्हा निवडा: </label>
     <select id="district" onchange="getPrices()">
       <option value="">-- जिल्हा निवडा --</option>
+      <!-- full list of districts (as before) -->
       <option value="Ahmednagar">Ahmednagar</option>
       <option value="Akola">Akola</option>
       <option value="Amravati">Amravati</option>
@@ -93,46 +63,116 @@
     </select>
   </div>
 
+  <div id="info" class="info small">जिल्हा निवडा म्हणजेच डेटा येईल — console मध्ये debug बघा.</div>
   <div id="results" class="cards"></div>
 
-  <script>
-    async function getPrices() {
-      const district = document.getElementById("district").value;
-      if (!district) return;
+<script>
+const API_KEY = "579b464db66ec23bdd0000019f0ca214d5c34d7476b4ffb1b25324e1";
+const RESOURCE_ID = "35985678-0d79-46b4-9ed6-6f13308a1d24";
+const BASE_URL = `https://api.data.gov.in/resource/${RESOURCE_ID}`;
 
-      const apiKey = "579b464db66ec23bdd0000019f0ca214d5c34d7476b4ffb1b25324e1";
-      const url = `https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=${apiKey}&format=json&limit=20&filters[State]=Maharashtra&filters[District]=${district}`;
+/*
+ Helper: normalize object keys to lowercase_underscore form,
+ and return value by standard name or 'N/A' if missing.
+*/
+function normalizeRecord(rec){
+  const norm = {};
+  for(const k in rec){
+    if(!Object.prototype.hasOwnProperty.call(rec,k)) continue;
+    const cleanK = k.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+    norm[cleanK] = rec[k];
+  }
+  return {
+    commodity: norm.commodity || norm.commodity_name || norm.commoditytype || norm['commodity name'] || 'N/A',
+    variety: norm.variety || norm.variety_name || 'N/A',
+    market: norm.market || norm.market_name || norm['market_name'] || 'N/A',
+    district: norm.district || norm.district_name || 'N/A',
+    min_price: norm.min_price || norm.min_price_rs || norm.minprice || norm['min_price_rs'] || 'N/A',
+    max_price: norm.max_price || norm.max_price_rs || norm.maxprice || 'N/A',
+    modal_price: norm.modal_price || norm.modalprice || norm.modal || norm['modal_price_rs'] || 'N/A',
+    arrival_date: norm.arrival_date || norm.arrivaldate || norm.date || 'N/A',
+    raw: rec
+  };
+}
 
-      const resDiv = document.getElementById("results");
-      resDiv.innerHTML = "<p>लोड होत आहे...</p>";
+function clearResults(){
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('info').innerText = 'लोड करत आहे...';
+}
 
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
+function showError(msg){
+  document.getElementById('results').innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#8b0000">${msg}</div>`;
+  document.getElementById('info').innerText = '';
+}
 
-        if (!data.records || data.records.length === 0) {
-          resDiv.innerHTML = "<p>डाटा उपलब्ध नाही 🚫</p>";
-          return;
-        }
+async function getPrices(){
+  const districtSelect = document.getElementById('district');
+  const district = districtSelect.value;
+  const resDiv = document.getElementById('results');
+  if(!district){
+    showError('कृपया प्रथम जिल्हा निवडा');
+    return;
+  }
 
-        resDiv.innerHTML = "";
-        data.records.forEach(item => {
-          const card = `
-            <div class="card">
-              <h3>${item.commodity} (${item.variety})</h3>
-              <p><b>किमान भाव:</b> ₹${item.min_price}</p>
-              <p><b>कमाल भाव:</b> ₹${item.max_price}</p>
-              <p><b>सरासरी भाव:</b> ₹${item.modal_price}</p>
-              <p><b>तारीख:</b> ${item.arrival_date}</p>
-            </div>
-          `;
-          resDiv.innerHTML += card;
-        });
-      } catch (error) {
-        resDiv.innerHTML = "<p>❌ काहीतरी चुकीचं झालं...</p>";
-        console.error(error);
-      }
+  clearResults();
+  // build url: increase limit to 500 to fetch more records (server may ignore very large)
+  const url = `${BASE_URL}?api-key=${API_KEY}&format=json&limit=500&filters[state]=Maharashtra&filters[district]=${encodeURIComponent(district)}`;
+  console.log('Fetching:', url);
+
+  try{
+    const resp = await fetch(url);
+    if(!resp.ok){
+      throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
     }
-  </script>
+    const data = await resp.json();
+    console.log('Raw API response:', data);
+    const recs = Array.isArray(data.records) ? data.records : [];
+    console.log('records.length =', recs.length, recs[0] || '(no first record)');
+
+    document.getElementById('info').innerText = `मिळालेले रेकॉर्ड्स: ${recs.length}`;
+
+    if(recs.length === 0){
+      showError('डाटा उपलब्ध नाही 🚫 (API कडून रिकामा response)');
+      return;
+    }
+
+    // Normalize and render cards
+    resDiv.innerHTML = '';
+    recs.forEach(r => {
+      const item = normalizeRecord(r);
+      // create card html (use N/A fallback)
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h3>${escapeHtml(item.commodity)} ${item.variety !== 'N/A' ? `(${escapeHtml(item.variety)})` : ''}</h3>
+        <p><b>बाजार:</b> ${escapeHtml(item.market)}</p>
+        <p><b>किमान भाव:</b> ₹ ${escapeHtml(item.min_price)}</p>
+        <p><b>कमाल भाव:</b> ₹ ${escapeHtml(item.max_price)}</p>
+        <p><b>सरासरी / modal:</b> ₹ ${escapeHtml(item.modal_price)}</p>
+        <p class="small"><b>तारीख:</b> ${escapeHtml(item.arrival_date)}</p>
+      `;
+      resDiv.appendChild(card);
+    });
+
+  } catch(err){
+    console.error('Fetch error:', err);
+    showError('API कॉल मध्ये त्रुटी आली — console पाहा.');
+  }
+}
+
+// small helper to avoid HTML injection
+function escapeHtml(str){
+  if(str === null || str === undefined) return 'N/A';
+  return String(str).replace(/[&<>"'`]/g, s => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'
+  })[s]);
+}
+
+/* Auto-load if user selects already */
+document.getElementById('district').addEventListener('change', getPrices);
+
+// Optional: auto-select user's district based on geolocation? (we can add later)
+
+</script>
 </body>
 </html>
