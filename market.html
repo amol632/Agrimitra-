@@ -27,7 +27,7 @@
       font-size: 16px;
     }
     select {
-      width: 60%;
+      width: 70%;
     }
     button {
       background: #d63384;
@@ -51,12 +51,41 @@
   <h2>📊 जिल्हानुसार मार्केट भाव</h2>
   <div class="container">
     <select id="districtSelect">
-      <option value="Buldhana">बुलढाणा</option>
-      <option value="Nagpur">नागपूर</option>
-      <option value="Pune">पुणे</option>
-      <option value="Nashik">नाशिक</option>
+      <option value="Ahmednagar">अहमदनगर</option>
+      <option value="Akola">अकोला</option>
+      <option value="Amravati">अमरावती</option>
       <option value="Aurangabad">औरंगाबाद</option>
-      <!-- बाकी सर्व जिल्हे इथे add करता येतील -->
+      <option value="Beed">बीड</option>
+      <option value="Bhandara">भंडारा</option>
+      <option value="Buldhana">बुलढाणा</option>
+      <option value="Chandrapur">चंद्रपूर</option>
+      <option value="Dhule">धुळे</option>
+      <option value="Gadchiroli">गडचिरोली</option>
+      <option value="Gondia">गोंदिया</option>
+      <option value="Hingoli">हिंगोली</option>
+      <option value="Jalgaon">जळगाव</option>
+      <option value="Jalna">जालना</option>
+      <option value="Kolhapur">कोल्हापूर</option>
+      <option value="Latur">लातूर</option>
+      <option value="Mumbai">मुंबई</option>
+      <option value="Nagpur">नागपूर</option>
+      <option value="Nanded">नांदेड</option>
+      <option value="Nandurbar">नंदुरबार</option>
+      <option value="Nashik">नाशिक</option>
+      <option value="Osmanabad">उस्मानाबाद</option>
+      <option value="Palghar">पालघर</option>
+      <option value="Parbhani">परभणी</option>
+      <option value="Pune">पुणे</option>
+      <option value="Raigad">रायगड</option>
+      <option value="Ratnagiri">रत्नागिरी</option>
+      <option value="Sangli">सांगली</option>
+      <option value="Satara">सातारा</option>
+      <option value="Sindhudurg">सिंधुदुर्ग</option>
+      <option value="Solapur">सोलापूर</option>
+      <option value="Thane">ठाणे</option>
+      <option value="Wardha">वर्धा</option>
+      <option value="Washim">वाशीम</option>
+      <option value="Yavatmal">यवतमाळ</option>
     </select>
     <button onclick="getMarketData()">भाव पहा</button>
 
@@ -64,17 +93,8 @@
   </div>
 
   <script>
+    // English -> मराठी dictionary (शॉर्ट ठेवला आहे, आधीचा मोठा dictionary वापरता येईल)
     const cropNames = {
-      "Wheat": "गहू",
-      "Rice": "तांदूळ",
-      "Maize": "मका",
-      "Jowar(Sorghum)": "ज्वारी",
-      "Bajra": "बाजरी",
-      "Barley": "जव",
-      "Ragi": "नाचणी",
-      "Green Gram (Moong)(Whole)": "मूग (संपूर्ण)",
-      "Black Gram (Urad)(Whole)": "उडीद (संपूर्ण)",
-      "Red Gram (Tur/Arhar)(Whole)": "तूर (संपूर्ण)",
       "Onion": "कांदा",
       "Potato": "बटाटा",
       "Tomato": "टोमॅटो",
@@ -82,53 +102,43 @@
       "Okra": "भेंडी",
       "Cabbage": "कोबी",
       "Cauliflower": "फुलकोबी",
-      "Chilli": "मिरची",
-      "Capsicum": "ढोबळी मिरची",
-      "Carrot": "गाजर",
-      "Cucumber": "काकडी",
-      "Bitter Gourd": "कारलं",
-      "Bottle Gourd": "दुधी भोपळा",
-      "Pumpkin": "भोपळा",
-      "Spinach": "पालक",
-      "Coriander": "कोथिंबीर",
-      "Fenugreek": "मेथी",
-      "Banana": "केळं",
-      "Mango": "आंबा",
-      "Orange": "संत्रं",
-      "Sweet Lime": "मोसंबी",
-      "Papaya": "पपई",
-      "Pomegranate": "डाळिंब",
-      "Apple": "सफरचंद",
-      "Grapes": "द्राक्षं",
-      "Guava": "पेरू",
-      "Watermelon": "कलिंगड",
-      "Sapota": "चिक्कू",
-      "Sugarcane": "ऊस",
-      "Cotton": "कापूस",
-      "Turmeric": "हळद",
-      "Ginger": "आले",
-      "Garlic": "लसूण"
+      "Green Gram (Moong)(Whole)": "मूग (संपूर्ण)",
+      "Jowar(Sorghum)": "ज्वारी",
+      "Maize": "मका",
+      "Wheat": "गहू",
+      "Rice": "तांदूळ"
+      // बाकी पिके/भाज्या add करता येतील
     };
+
+    function getTodayDate() {
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear();
+      return dd + '/' + mm + '/' + yyyy; // API date format
+    }
 
     async function getMarketData() {
       const district = document.getElementById("districtSelect").value;
       const resultsDiv = document.getElementById("results");
       resultsDiv.innerHTML = "⏳ डेटा लोड होत आहे...";
 
+      const today = getTodayDate();
+
       try {
         const response = await fetch(
-          `https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=579b464db66ec23bdd0000019f0ca214d5c34d7476b4ffb1b25324e1&format=json&limit=20&filters[District]=${district}`
+          `https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=579b464db66ec23bdd0000019f0ca214d5c34d7476b4ffb1b25324e1&format=json&limit=100&filters[District]=${district}&filters[Arrival_Date]=${today}`
         );
         const data = await response.json();
 
         if (!data.records || data.records.length === 0) {
-          resultsDiv.innerHTML = "🚫 या जिल्ह्यातील डेटा उपलब्ध नाही.";
+          resultsDiv.innerHTML = `🚫 ${district} साठी आज (${today}) डेटा उपलब्ध नाही.`;
           return;
         }
 
         resultsDiv.innerHTML = "";
         data.records.forEach(item => {
-          const crop = cropNames[item.Commodity] || item.Commodity; // मराठी नाव नसेल तर English दाखवेल
+          const crop = cropNames[item.Commodity] || item.Commodity;
           const card = `
             <div class="card">
               <h3>${crop}</h3>
