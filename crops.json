@@ -1,0 +1,92 @@
+[
+  {
+    "crop": "गहू",
+    "fertilizer": "युरिया (50kg/acre), DAP (40kg/acre)",
+    "pesticide": "इमिडाक्लोप्रिड 17.8% SL (0.5ml/L), थायोमेथॉक्साम"
+  },
+  {
+    "crop": "कापूस",
+    "fertilizer": "NPK 20:20:0 (100kg/acre), युरिया (30kg/acre)",
+    "pesticide": "अॅसिटामिप्रिड, स्पिनोसॅड"
+  },
+  {
+    "crop": "सोयाबीन",
+    "fertilizer": "SSP (150kg/acre), युरिया (20kg/acre)",
+    "pesticide": "क्लोरोपायरीफॉस, लॅम्ब्डा सायहॅलोथ्रिन"
+  },
+  {
+    "crop": "कांदा",
+    "fertilizer": "NPK 10:26:26 (50kg/acre), युरिया (40kg/acre)",
+    "pesticide": "डायमेथोएट, प्रॉफेनोफॉस"
+  },
+  {
+    "crop": "टोमॅटो",
+    "fertilizer": "युरिया (30kg/acre), कॅल्शियम नायट्रेट (25kg/acre)",
+    "pesticide": "सायपरमेथ्रिन, इमामेक्टिन बेंझोएट"
+  },
+  {
+    "crop": "बटाटा",
+    "fertilizer": "NPK 12:32:16 (80kg/acre), युरिया (25kg/acre)",
+    "pesticide": "मॅनकोझेब, मेटालॅक्सिल"
+  },
+  {
+    "crop": "तूर",
+    "fertilizer": "DAP (50kg/acre), युरिया (20kg/acre)",
+    "pesticide": "इंडॉक्साकार्ब, सायपरमेथ्रिन"
+  },
+  {
+    "crop": "हरभरा",
+    "fertilizer": "SSP (120kg/acre), युरिया (15kg/acre)",
+    "pesticide": "इमिडाक्लोप्रिड, क्लोरोपायरीफॉस"
+  },
+  {
+    "crop": "मका",
+    "fertilizer": "NPK 15:15:15 (100kg/acre), युरिया (40kg/acre)",
+    "pesticide": "अॅसिटामिप्रिड, स्पिनोसॅड"
+  },
+  {
+    "crop": "भेंडी",
+    "fertilizer": "NPK 12:32:16 (60kg/acre), युरिया (20kg/acre)",
+    "pesticide": "इमामेक्टिन बेंझोएट, मॅलाथिऑन"
+  },
+  {
+    "crop": "वांगी",
+    "fertilizer": "NPK 10:26:26 (50kg/acre), युरिया (30kg/acre)",
+    "pesticide": "सायपरमेथ्रिन, क्लोरोपायरीफॉस"
+  },
+  {
+    "crop": "कोबी",
+    "fertilizer": "NPK 15:15:15 (70kg/acre), युरिया (25kg/acre)",
+    "pesticide": "इमिडाक्लोप्रिड, डायमेथोएट"
+  },
+  {
+    "crop": "फुलकोबी",
+    "fertilizer": "NPK 15:15:15 (60kg/acre), युरिया (30kg/acre)",
+    "pesticide": "मॅलाथिऑन, सायपरमेथ्रिन"
+  },
+  {
+    "crop": "शेवंती",
+    "fertilizer": "NPK 19:19:19 (40kg/acre), युरिया (20kg/acre)",
+    "pesticide": "डायमेथोएट, प्रॉफेनोफॉस"
+  },
+  {
+    "crop": "मिरची",
+    "fertilizer": "कॅल्शियम नायट्रेट (30kg/acre), युरिया (25kg/acre)",
+    "pesticide": "सायपरमेथ्रिन, इमामेक्टिन बेंझोएट"
+  },
+  {
+    "crop": "गाजर",
+    "fertilizer": "NPK 12:32:16 (50kg/acre), युरिया (20kg/acre)",
+    "pesticide": "मॅलाथिऑन, इमिडाक्लोप्रिड"
+  },
+  {
+    "crop": "पालक",
+    "fertilizer": "NPK 19:19:19 (25kg/acre), युरिया (15kg/acre)",
+    "pesticide": "मॅलाथिऑन, क्लोरोपायरीफॉस"
+  },
+  {
+    "crop": "मेथी",
+    "fertilizer": "DAP (25kg/acre), युरिया (10kg/acre)",
+    "pesticide": "इमिडाक्लोप्रिड, सायपरमेथ्रिन"
+  }
+]
