@@ -4,109 +4,201 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>खत व औषध सल्ला</title>
-  <link rel="stylesheet" href="style.css">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(#ffdde1, #ee9ca7);
+      background: linear-gradient(135deg, #ff99cc, #ffccff);
+      text-align: center;
       margin: 0;
       padding: 0;
-      text-align: center;
     }
     header {
       background: #e91e63;
-      color: white;
       padding: 15px;
-      font-size: 20px;
+      color: white;
+      font-size: 22px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    header img {
+      height: 35px;
+      margin-right: 10px;
     }
     .container {
-      margin: 20px;
+      margin: 20px auto;
+      max-width: 650px;
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
     }
-    select, button {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 8px;
-      border: none;
+    select {
+      width: 90%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
       font-size: 16px;
     }
     button {
       background: #e91e63;
       color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
       cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #c2185b;
     }
     .card {
-      background: white;
+      margin-top: 20px;
       padding: 15px;
-      margin: 15px;
-      border-radius: 12px;
+      border-radius: 15px;
+      background: #fff0f6;
       text-align: left;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0px 3px 8px rgba(0,0,0,0.15);
     }
-    .crop-name {
-      font-size: 20px;
+    .card h3 {
+      margin-top: 0;
       color: #e91e63;
-      font-weight: bold;
+    }
+    .back-btn {
+      margin-top: 20px;
+      display: inline-block;
+      text-decoration: none;
+      background: #2196f3;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-  <header>🌱 खत व औषध सल्ला</header>
+  <header>
+    <img src="logo.png" alt="AgriMitra"> खत व औषध सल्ला
+  </header>
 
   <div class="container">
-    <label for="cropSelect">पिक निवडा:</label>
+    <h2>👉 पिक निवडा</h2>
     <select id="cropSelect">
       <option value="">-- पिक निवडा --</option>
-    </select>
-    <button onclick="showAdvice()">सल्ला पहा</button>
 
-    <div id="adviceContainer"></div>
+      <!-- धान्य -->
+      <option>ज्वारी</option>
+      <option>बाजरी</option>
+      <option>मका</option>
+      <option>गहू</option>
+      <option>तांदूळ</option>
+
+      <!-- डाळी -->
+      <option>हरभरा</option>
+      <option>मुग</option>
+      <option>उडीद</option>
+      <option>तुरी</option>
+      <option>सोयाबीन</option>
+      <option>चवळी</option>
+      <option>भुईमूग</option>
+      <option>मसूर</option>
+
+      <!-- नगदी पिके -->
+      <option>कापूस</option>
+      <option>ऊस</option>
+      <option>सूर्यफूल</option>
+      <option>मोहरी</option>
+      <option>एरंडेल</option>
+
+      <!-- फळे -->
+      <option>द्राक्षे</option>
+      <option>आंबा</option>
+      <option>डाळिंब</option>
+      <option>संत्री</option>
+      <option>केळी</option>
+      <option>पपई</option>
+      <option>पेरू</option>
+      <option>सीताफळ</option>
+      <option>लिंबू</option>
+      <option>चिकू</option>
+      <option>फणस</option>
+
+      <!-- भाजीपाला -->
+      <option>कांदा</option>
+      <option>लसूण</option>
+      <option>टोमॅटो</option>
+      <option>वांगी</option>
+      <option>भेंडी</option>
+      <option>मिरची</option>
+      <option>कोबी</option>
+      <option>फुलकोबी</option>
+      <option>गाजर</option>
+      <option>बीट</option>
+      <option>दोडका</option>
+      <option>कारले</option>
+      <option>काकडी</option>
+      <option>शेपू</option>
+      <option>पालक</option>
+      <option>मेथी</option>
+    </select>
+    <br>
+    <button onclick="showAdvice()">सल्ला पाहा</button>
+
+    <div id="adviceCard" class="card" style="display:none;">
+      <h3 id="cropName"></h3>
+      <p><b>खत सल्ला:</b> <span id="fertilizer"></span></p>
+      <p><b>औषध सल्ला:</b> <span id="medicine"></span></p>
+    </div>
+
+    <a href="dashboard.html" class="back-btn">⬅ परत जा</a>
   </div>
 
   <script>
-    async function loadCrops() {
-      try {
-        const response = await fetch('crops.json'); // crops.json मध्ये सर्व डेटा
-        const crops = await response.json();
-
-        const select = document.getElementById('cropSelect');
-        crops.forEach(crop => {
-          let option = document.createElement('option');
-          option.value = crop.name;
-          option.textContent = crop.name;
-          select.appendChild(option);
-        });
-      } catch (error) {
-        console.error("Error loading crops:", error);
-      }
-    }
+    // खत व औषध माहिती
+    const cropData = {
+      "कापूस": { fertilizer: "युरिया 100kg/हे, डीएपी 50kg/हे", medicine: "इमिडाक्लोप्रिड 0.3ml/ली पाण्यात फवारणी" },
+      "सोयाबीन": { fertilizer: "सुपर फॉस्फेट 125kg/हे, पोटॅश 40kg/हे", medicine: "थायोमेथॉक्साम बियाणे प्रक्रिया" },
+      "ज्वारी": { fertilizer: "युरिया 80kg/हे, डीएपी 40kg/हे", medicine: "डायमेथोएट फवारणी" },
+      "भुईमूग": { fertilizer: "सुपर फॉस्फेट 150kg/हे, युरिया 20kg/हे", medicine: "कार्बेन्डाझिम बियाणे प्रक्रिया" },
+      "गहू": { fertilizer: "युरिया 100kg/हे, पोटॅश 40kg/हे", medicine: "मॅन्कोजेब फवारणी" },
+      "तांदूळ": { fertilizer: "डीएपी 60kg/हे, युरिया 80kg/हे", medicine: "क्लोरोपायरीफॉस फवारणी" },
+      "मका": { fertilizer: "एनपीके 100:50:40kg/हे", medicine: "इमिडाक्लोप्रिड फवारणी" },
+      "कांदा": { fertilizer: "एनपीके 100:50:50kg/हे", medicine: "मॅन्कोजेब फवारणी" },
+      "टोमॅटो": { fertilizer: "युरिया 50kg/हे, डीएपी 40kg/हे, पोटॅश 30kg/हे", medicine: "क्लोरोथॅलोनिल फवारणी" },
+      "वांगी": { fertilizer: "एनपीके 80:40:40kg/हे", medicine: "सायपरमेथ्रिन फवारणी" },
+      "मिरची": { fertilizer: "एनपीके 100:50:50kg/हे", medicine: "अझॉक्सिस्ट्रोबिन फवारणी" },
+      "भेंडी": { fertilizer: "युरिया 60kg/हे, डीएपी 30kg/हे", medicine: "इमिडाक्लोप्रिड फवारणी" },
+      "द्राक्षे": { fertilizer: "एनपीके 120:60:60kg/हे", medicine: "सल्फर + मॅन्कोजेब फवारणी" },
+      "आंबा": { fertilizer: "युरिया 1kg, सुपर फॉस्फेट 2kg प्रति झाड", medicine: "कॉपर ऑक्सिक्लोराइड फवारणी" },
+      "डाळिंब": { fertilizer: "एनपीके 200:100:100g प्रति झाड", medicine: "कार्बेन्डाझिम + मॅन्कोजेब फवारणी" },
+      "केळी": { fertilizer: "युरिया 200g, पोटॅश 150g प्रति झाड", medicine: "प्सूडोमोनास फवारणी" },
+      "पपई": { fertilizer: "एनपीके 100:50:50g प्रति झाड", medicine: "कॉपर ऑक्सिक्लोराइड फवारणी" },
+      "ऊस": { fertilizer: "एनपीके 250:125:125kg/हे", medicine: "क्लोरपायरीफॉस फवारणी" },
+      "लसूण": { fertilizer: "एनपीके 100:50:50kg/हे", medicine: "मॅन्कोजेब फवारणी" },
+      "कोबी": { fertilizer: "एनपीके 80:40:40kg/हे", medicine: "क्लोरोथॅलोनिल फवारणी" },
+      "फुलकोबी": { fertilizer: "एनपीके 90:45:45kg/हे", medicine: "मेटॅलॅक्सिल फवारणी" },
+      "गाजर": { fertilizer: "एनपीके 60:40:40kg/हे", medicine: "मॅन्कोजेब फवारणी" },
+      "बीट": { fertilizer: "एनपीके 70:40:40kg/हे", medicine: "क्लोरोथॅलोनिल फवारणी" },
+      "दोडका": { fertilizer: "एनपीके 50:30:30kg/हे", medicine: "इमिडाक्लोप्रिड फवारणी" },
+      "कारले": { fertilizer: "एनपीके 50:30:30kg/हे", medicine: "मॅन्कोजेब फवारणी" },
+      "काकडी": { fertilizer: "एनपीके 60:30:30kg/हे", medicine: "डायमेथोएट फवारणी" },
+      "पालक": { fertilizer: "युरिया 40kg/हे", medicine: "मॅन्कोजेब फवारणी" },
+      "मेथी": { fertilizer: "युरिया 30kg/हे", medicine: "कॉपर ऑक्सिक्लोराइड फवारणी" },
+      "शेपू": { fertilizer: "युरिया 25kg/हे", medicine: "मॅन्कोजेब फवारणी" }
+    };
 
     function showAdvice() {
-      const cropName = document.getElementById('cropSelect').value;
-      const adviceContainer = document.getElementById('adviceContainer');
-      adviceContainer.innerHTML = "";
-
-      if (!cropName) {
-        adviceContainer.innerHTML = "<p style='color:red;font-size:18px;'>❌ कृपया पिक निवडा</p>";
-        return;
+      const crop = document.getElementById("cropSelect").value;
+      if (crop && cropData[crop]) {
+        document.getElementById("cropName").innerText = crop;
+        document.getElementById("fertilizer").innerText = cropData[crop].fertilizer;
+        document.getElementById("medicine").innerText = cropData[crop].medicine;
+        document.getElementById("adviceCard").style.display = "block";
+      } else {
+        alert("❌ कृपया पिक निवडा!");
       }
-
-      fetch('crops.json')
-        .then(res => res.json())
-        .then(crops => {
-          const crop = crops.find(c => c.name === cropName);
-          if (crop) {
-            const card = `
-              <div class="card">
-                <div class="crop-name">${crop.name}</div>
-                <p><b>खत:</b> ${crop.fertilizer}</p>
-                <p><b>औषध:</b> ${crop.medicine}</p>
-              </div>`;
-            adviceContainer.innerHTML = card;
-          }
-        });
     }
-
-    loadCrops();
   </script>
 </body>
 </html>
