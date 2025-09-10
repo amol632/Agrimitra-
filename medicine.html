@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <title>औषध सल्ला</title>
+</head>
+<body>
+  <h2>औषध सल्ला</h2>
+  <div id="advice">लोड होत आहे...</div>
+  <a href="dashboard.html">🔙 परत जा</a>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const crop = urlParams.get("crop");
+
+    if (!crop) {
+      document.getElementById("advice").innerHTML = "पिक निवडलेले नाही ❌";
+    } else {
+      fetch("crops.json")
+        .then(res => res.json())
+        .then(data => {
+          if (data[crop]) {
+            document.getElementById("advice").innerHTML = `
+              <h3>${crop}</h3>
+              <p><b>औषध सल्ला:</b> ${data[crop].medicine}</p>
+            `;
+          } else {
+            document.getElementById("advice").innerHTML = "डेटा उपलब्ध नाही 🚫";
+          }
+        });
+    }
+  </script>
+</body>
+</html>
