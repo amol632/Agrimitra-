@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>बातम्या - AgriMitra</title>
+  <title>शेतकरी बातम्या - AgriMitra</title>
   <style>
     body {
       margin: 0;
@@ -30,7 +30,6 @@
       position: relative;
     }
 
-    /* Back Button */
     .back-btn {
       position: absolute;
       left: 15px;
@@ -46,12 +45,7 @@
       cursor: pointer;
     }
 
-    .back-btn:hover {
-      background: #f8bbd0;
-    }
-
-    /* Switch Button */
-    .switch-btn {
+    .lang-btn {
       position: absolute;
       right: 15px;
       top: 50%;
@@ -66,136 +60,117 @@
       cursor: pointer;
     }
 
-    .switch-btn:hover {
-      background: #f8bbd0;
-    }
-
-    /* News container */
-    .news-container {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    .news-card {
+      background: white;
+      margin: 10px;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
       max-width: 800px;
       width: 100%;
     }
 
-    .news-card {
-      background: white;
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
-      display: flex;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .news-card img {
-      width: 100px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-
-    .news-details {
-      flex: 1;
-    }
-
-    .news-details h3 {
-      margin: 0;
-      font-size: 16px;
+    .news-card h3 {
       color: #e91e63;
+      margin-bottom: 8px;
     }
 
-    .news-details p {
-      margin: 5px 0;
-      font-size: 14px;
-      color: #444;
+    .news-card p {
+      font-size: 15px;
+      margin-bottom: 10px;
     }
 
-    .news-details a {
+    .news-card a {
       text-decoration: none;
       color: #2196f3;
-      font-size: 14px;
+      font-weight: bold;
+    }
+
+    #loadMoreBtn {
+      margin: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #loadMoreBtn:hover {
+      background: #c2185b;
     }
   </style>
 </head>
 <body>
   <header>
     <button class="back-btn" onclick="goBack()">🔙 डॅशबोर्ड</button>
-    📰 शेती बातम्या
-    <button class="switch-btn" onclick="switchLang()">मराठी</button>
+    📰 शेतकरी बातम्या
+    <button class="lang-btn" onclick="toggleLanguage()">मराठी/हिंदी</button>
   </header>
 
-  <div id="news" class="news-container">⏳ बातम्या लोड होत आहेत...</div>
+  <div id="newsContainer">⏳ बातम्या लोड होत आहेत...</div>
+  <button id="loadMoreBtn" onclick="loadMore()">👉 अजून बातम्या</button>
 
   <script>
     const apiKey = "8e657c79649d478693d4cc0bc963c6b1";
-    let currentLang = "mr"; // सुरुवातीला मराठी
+    let allNews = [];
+    let currentIndex = 0;
+    let currentLang = "mr";
 
-    async function fetchNews() {
+    async function loadNews(lang = "mr") {
+      let url = "";
+      if (lang === "mr") {
+        url = `https://newsapi.org/v2/top-headlines?country=in&language=mr&apiKey=${apiKey}`;
+      } else {
+        url = `https://newsapi.org/v2/top-headlines?country=in&language=hi&apiKey=${apiKey}`;
+      }
+
+      document.getElementById("newsContainer").innerHTML = "⏳ बातम्या लोड होत आहेत...";
       try {
-        const url = `https://newsapi.org/v2/top-headlines?language=${currentLang}&country=in&apiKey=${apiKey}`;
         const response = await fetch(url);
         const data = await response.json();
-
-        const newsContainer = document.getElementById("news");
-        newsContainer.innerHTML = "";
-
-        if (data.articles && data.articles.length > 0) {
-          data.articles.forEach(article => {
-            const card = document.createElement("div");
-            card.className = "news-card";
-
-            const img = document.createElement("img");
-            img.src = article.urlToImage || "https://via.placeholder.com/100";
-            card.appendChild(img);
-
-            const details = document.createElement("div");
-            details.className = "news-details";
-
-            const title = document.createElement("h3");
-            title.textContent = article.title;
-            details.appendChild(title);
-
-            const desc = document.createElement("p");
-            desc.textContent = article.description || "";
-            details.appendChild(desc);
-
-            const link = document.createElement("a");
-            link.href = article.url;
-            link.target = "_blank";
-            link.textContent = "👉 अधिक वाचा";
-            details.appendChild(link);
-
-            card.appendChild(details);
-            newsContainer.appendChild(card);
-          });
-        } else {
-          newsContainer.innerHTML = "⚠️ बातम्या मिळाल्या नाहीत.";
-        }
+        allNews = data.articles;
+        currentIndex = 0;
+        document.getElementById("newsContainer").innerHTML = "";
+        document.getElementById("loadMoreBtn").style.display = "block";
+        loadMore();
       } catch (error) {
+        document.getElementById("newsContainer").innerHTML = "⚠️ बातम्या मिळू शकल्या नाहीत.";
         console.error(error);
-        document.getElementById("news").innerHTML = "⚠️ नेटवर्क समस्या आली.";
       }
     }
 
-    function switchLang() {
-      if (currentLang === "mr") {
-        currentLang = "hi"; // हिंदी
-        document.querySelector(".switch-btn").innerText = "हिंदी";
-      } else {
-        currentLang = "mr"; // मराठी
-        document.querySelector(".switch-btn").innerText = "मराठी";
+    function loadMore() {
+      let container = document.getElementById("newsContainer");
+      for (let i = currentIndex; i < currentIndex + 10 && i < allNews.length; i++) {
+        let item = allNews[i];
+        container.innerHTML += `
+          <div class="news-card">
+            <h3>${item.title || "बातमी उपलब्ध नाही"}</h3>
+            <p>${item.description || ""}</p>
+            <a href="${item.url}" target="_blank">🔗 पूर्ण वाचा</a>
+          </div>
+        `;
       }
-      fetchNews();
+      currentIndex += 10;
+
+      if (currentIndex >= allNews.length) {
+        document.getElementById("loadMoreBtn").style.display = "none";
+      }
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === "mr" ? "hi" : "mr";
+      loadNews(currentLang);
     }
 
     function goBack() {
       window.location.href = "dashboard.html";
     }
 
-    // सुरुवातीला लोड
-    fetchNews();
+    // सुरुवातीला मराठी बातम्या
+    loadNews("mr");
   </script>
 </body>
 </html>
