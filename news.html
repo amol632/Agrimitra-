@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>शेतकरी बातम्या - AgriMitra</title>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5013824022641117"
-     crossorigin="anonymous"></script>
+  <title>बातम्या - AgriMitra</title>
   <style>
     body {
       margin: 0;
@@ -16,7 +14,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
+      padding: 10px;
     }
 
     header {
@@ -47,162 +45,177 @@
       cursor: pointer;
     }
 
-    .lang-btn {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: white;
-      color: #e91e63;
-      border: none;
-      padding: 8px 12px;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
+    .lang-toggle {
+      margin-bottom: 15px;
     }
 
-    .news-card {
+    .lang-toggle button {
+      padding: 8px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
       background: white;
-      margin: 10px;
+      color: #e91e63;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .news-container {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .card {
+      background: white;
+      margin: 10px 0;
       padding: 15px;
       border-radius: 12px;
       box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
-      max-width: 800px;
-      width: 100%;
     }
 
-    .news-card h3 {
+    .card h3 {
       color: #e91e63;
-      margin-bottom: 8px;
-    }
-
-    .news-card p {
-      font-size: 15px;
       margin-bottom: 10px;
     }
 
-    .news-card a {
+    .card p {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .card a {
       text-decoration: none;
       color: #2196f3;
       font-weight: bold;
     }
 
-    #loadMoreBtn {
-      margin: 20px;
+    .load-more {
       padding: 10px 20px;
-      font-size: 16px;
       background: #e91e63;
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
+      margin: 15px 0;
       cursor: pointer;
+      font-weight: bold;
     }
 
-    #loadMoreBtn:hover {
-      background: #c2185b;
-    }
-
+    /* Ad Space */
     .ad-container {
-      margin: 20px 0;
+      margin: 15px 0;
       text-align: center;
     }
   </style>
+  <!-- AdSense / AdMob (WebView साठी वापरला जातो) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-app-pub-5013824022641117~6519328111" crossorigin="anonymous"></script>
 </head>
 <body>
   <header>
     <button class="back-btn" onclick="goBack()">🔙 डॅशबोर्ड</button>
-    📰 शेतकरी बातम्या
-    <button class="lang-btn" onclick="toggleLanguage()">मराठी/हिंदी</button>
+    📰 कृषी बातम्या
   </header>
 
-  <!-- पहिला Ad (header खाली) -->
+  <!-- ✅ Banner Ad (Top) -->
   <div class="ad-container">
     <ins class="adsbygoogle"
          style="display:block"
-         data-ad-client="ca-pub-5013824022641117"
+         data-ad-client="ca-app-pub-5013824022641117~6519328111"
          data-ad-slot="8183763574"
          data-ad-format="auto"
          data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 
-  <div id="newsContainer">⏳ बातम्या लोड होत आहेत...</div>
-  <button id="loadMoreBtn" onclick="loadMore()">👉 अजून बातम्या</button>
+  <div class="lang-toggle">
+    <button onclick="changeLanguage('hi')">हिंदी</button>
+    <button onclick="changeLanguage('mr')">मराठी</button>
+  </div>
+
+  <div class="news-container" id="news-container">
+    ⏳ बातम्या लोड होत आहेत...
+  </div>
+
+  <!-- ✅ Banner Ad (Middle) -->
+  <div class="ad-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-app-pub-5013824022641117~6519328111"
+         data-ad-slot="9305273556"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+  </div>
+
+  <button class="load-more" onclick="loadMoreNews()">➡️ आणखी वाचा</button>
+
+  <!-- ✅ Banner Ad (Bottom) -->
+  <div class="ad-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-app-pub-5013824022641117~6519328111"
+         data-ad-slot="8183763574"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+  </div>
 
   <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+
     const apiKey = "8e657c79649d478693d4cc0bc963c6b1";
-    let allNews = [];
-    let currentIndex = 0;
-    let currentLang = "mr";
+    let currentLanguage = "hi"; 
+    let page = 1;
+    const pageSize = 10;
 
-    async function loadNews(lang = "mr") {
-      let url = "";
-      if (lang === "mr") {
-        url = `https://newsapi.org/v2/top-headlines?country=in&language=mr&apiKey=${apiKey}`;
-      } else {
-        url = `https://newsapi.org/v2/top-headlines?country=in&language=hi&apiKey=${apiKey}`;
-      }
+    async function fetchNews(language, page) {
+      const container = document.getElementById("news-container");
+      if (page === 1) container.innerHTML = "⏳ बातम्या लोड होत आहेत...";
 
-      document.getElementById("newsContainer").innerHTML = "⏳ बातम्या लोड होत आहेत...";
       try {
+        let query = language === "mr" ? "कृषी" : "कृषि";
+        const url = `https://newsapi.org/v2/everything?q=${query}&language=${language}&pageSize=${pageSize}&page=${page}&apiKey=${apiKey}`;
         const response = await fetch(url);
         const data = await response.json();
-        allNews = data.articles;
-        currentIndex = 0;
-        document.getElementById("newsContainer").innerHTML = "";
-        document.getElementById("loadMoreBtn").style.display = "block";
-        loadMore();
+
+        if (page === 1) container.innerHTML = "";
+
+        if (data.articles.length === 0) {
+          container.innerHTML += "<p>🚫 बातम्या उपलब्ध नाहीत</p>";
+          return;
+        }
+
+        data.articles.forEach(article => {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <h3>${article.title || "शीर्षक उपलब्ध नाही"}</h3>
+            <p>${article.description || ""}</p>
+            <a href="${article.url}" target="_blank">🌐 पूर्ण वाचा</a>
+          `;
+          container.appendChild(card);
+        });
+
       } catch (error) {
-        document.getElementById("newsContainer").innerHTML = "⚠️ बातम्या मिळू शकल्या नाहीत.";
+        container.innerHTML = "<p>⚠️ बातम्या आणताना त्रुटी आली.</p>";
         console.error(error);
       }
     }
 
-    function loadMore() {
-      let container = document.getElementById("newsContainer");
-      for (let i = currentIndex; i < currentIndex + 10 && i < allNews.length; i++) {
-        let item = allNews[i];
-        container.innerHTML += `
-          <div class="news-card">
-            <h3>${item.title || "बातमी उपलब्ध नाही"}</h3>
-            <p>${item.description || ""}</p>
-            <a href="${item.url}" target="_blank">🔗 पूर्ण वाचा</a>
-          </div>
-        `;
-
-        // प्रत्येक 5 बातम्यानंतर जाहिरात
-        if ((i + 1) % 5 === 0) {
-          container.innerHTML += `
-            <div class="ad-container">
-              <ins class="adsbygoogle"
-                   style="display:block"
-                   data-ad-client="ca-pub-5013824022641117"
-                   data-ad-slot="9305273556"
-                   data-ad-format="auto"
-                   data-full-width-responsive="true"></ins>
-              <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-          `;
-        }
-      }
-      currentIndex += 10;
-
-      if (currentIndex >= allNews.length) {
-        document.getElementById("loadMoreBtn").style.display = "none";
-      }
+    function changeLanguage(lang) {
+      currentLanguage = lang;
+      page = 1;
+      fetchNews(currentLanguage, page);
     }
 
-    function toggleLanguage() {
-      currentLang = currentLang === "mr" ? "hi" : "mr";
-      loadNews(currentLang);
+    function loadMoreNews() {
+      page++;
+      fetchNews(currentLanguage, page);
     }
 
     function goBack() {
       window.location.href = "dashboard.html";
     }
 
-    loadNews("mr");
+    fetchNews(currentLanguage, page);
   </script>
 </body>
 </html>
