@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>बातम्या - AgriMitra</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fecfef);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    header {
+      background: #e91e63;
+      color: white;
+      width: 100%;
+      text-align: center;
+      padding: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      border-radius: 0 0 15px 15px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    /* Back Button */
+    .back-btn {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      color: #e91e63;
+      border: none;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background: #f8bbd0;
+    }
+
+    /* Switch Button */
+    .switch-btn {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      color: #e91e63;
+      border: none;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .switch-btn:hover {
+      background: #f8bbd0;
+    }
+
+    /* News container */
+    .news-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .news-card {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .news-card img {
+      width: 100px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .news-details {
+      flex: 1;
+    }
+
+    .news-details h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #e91e63;
+    }
+
+    .news-details p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .news-details a {
+      text-decoration: none;
+      color: #2196f3;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="goBack()">🔙 डॅशबोर्ड</button>
+    📰 शेती बातम्या
+    <button class="switch-btn" onclick="switchLang()">मराठी</button>
+  </header>
+
+  <div id="news" class="news-container">⏳ बातम्या लोड होत आहेत...</div>
+
+  <script>
+    const apiKey = "8e657c79649d478693d4cc0bc963c6b1";
+    let currentLang = "mr"; // सुरुवातीला मराठी
+
+    async function fetchNews() {
+      try {
+        const url = `https://newsapi.org/v2/top-headlines?language=${currentLang}&country=in&apiKey=${apiKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const newsContainer = document.getElementById("news");
+        newsContainer.innerHTML = "";
+
+        if (data.articles && data.articles.length > 0) {
+          data.articles.forEach(article => {
+            const card = document.createElement("div");
+            card.className = "news-card";
+
+            const img = document.createElement("img");
+            img.src = article.urlToImage || "https://via.placeholder.com/100";
+            card.appendChild(img);
+
+            const details = document.createElement("div");
+            details.className = "news-details";
+
+            const title = document.createElement("h3");
+            title.textContent = article.title;
+            details.appendChild(title);
+
+            const desc = document.createElement("p");
+            desc.textContent = article.description || "";
+            details.appendChild(desc);
+
+            const link = document.createElement("a");
+            link.href = article.url;
+            link.target = "_blank";
+            link.textContent = "👉 अधिक वाचा";
+            details.appendChild(link);
+
+            card.appendChild(details);
+            newsContainer.appendChild(card);
+          });
+        } else {
+          newsContainer.innerHTML = "⚠️ बातम्या मिळाल्या नाहीत.";
+        }
+      } catch (error) {
+        console.error(error);
+        document.getElementById("news").innerHTML = "⚠️ नेटवर्क समस्या आली.";
+      }
+    }
+
+    function switchLang() {
+      if (currentLang === "mr") {
+        currentLang = "hi"; // हिंदी
+        document.querySelector(".switch-btn").innerText = "हिंदी";
+      } else {
+        currentLang = "mr"; // मराठी
+        document.querySelector(".switch-btn").innerText = "मराठी";
+      }
+      fetchNews();
+    }
+
+    function goBack() {
+      window.location.href = "dashboard.html";
+    }
+
+    // सुरुवातीला लोड
+    fetchNews();
+  </script>
+</body>
+</html>
