@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>शेतकरी बातम्या - AgriMitra</title>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5013824022641117"
+     crossorigin="anonymous"></script>
   <style>
     body {
       margin: 0;
@@ -100,6 +102,11 @@
     #loadMoreBtn:hover {
       background: #c2185b;
     }
+
+    .ad-container {
+      margin: 20px 0;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -108,6 +115,17 @@
     📰 शेतकरी बातम्या
     <button class="lang-btn" onclick="toggleLanguage()">मराठी/हिंदी</button>
   </header>
+
+  <!-- पहिला Ad (header खाली) -->
+  <div class="ad-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-5013824022641117"
+         data-ad-slot="8183763574"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
 
   <div id="newsContainer">⏳ बातम्या लोड होत आहेत...</div>
   <button id="loadMoreBtn" onclick="loadMore()">👉 अजून बातम्या</button>
@@ -152,6 +170,21 @@
             <a href="${item.url}" target="_blank">🔗 पूर्ण वाचा</a>
           </div>
         `;
+
+        // प्रत्येक 5 बातम्यानंतर जाहिरात
+        if ((i + 1) % 5 === 0) {
+          container.innerHTML += `
+            <div class="ad-container">
+              <ins class="adsbygoogle"
+                   style="display:block"
+                   data-ad-client="ca-pub-5013824022641117"
+                   data-ad-slot="9305273556"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+              <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
+          `;
+        }
       }
       currentIndex += 10;
 
@@ -169,7 +202,6 @@
       window.location.href = "dashboard.html";
     }
 
-    // सुरुवातीला मराठी बातम्या
     loadNews("mr");
   </script>
 </body>
