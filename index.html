@@ -32,7 +32,7 @@
       padding: 25px;
       border-radius: 12px;
       box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
-      width: 300px;   /* बॉक्सची रुंदी थोडी कमी केली */
+      width: 300px;
       text-align: center;
     }
 
@@ -66,11 +66,11 @@
     }
     .input-group input {
       width: 100%;
-      padding: 8px;              /* padding कमी केला */
+      padding: 8px;
       border: 1.5px solid #e91e63;
       border-radius: 6px;
       font-size: 13px;
-      box-sizing: border-box;    /* नीट adjust होण्यासाठी */
+      box-sizing: border-box;
     }
 
     .btn {
@@ -162,7 +162,12 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+    import { 
+      getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, 
+      GoogleAuthProvider, signInWithPopup 
+    } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+    import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-messaging.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCiFiazAT4lummi9MJTkDOU_ZhpgeBHXGU",
@@ -176,7 +181,9 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
+    const messaging = getMessaging(app);
 
     // Tabs
     const loginTab = document.getElementById("loginTab");
@@ -198,12 +205,33 @@
       loginTab.classList.remove("active");
     });
 
+    // Function to request notification permission & save FCM token
+    async function requestPermissionAndSaveToken(userId) {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          const token = await getToken(messaging, {
+            vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
+          });
+          console.log("FCM Token:", token);
+
+          if (userId && token) {
+            await setDoc(doc(db, "fcmTokens", userId), { token: token });
+            console.log("Token Firestore मध्ये सेव झाला ✅");
+          }
+        }
+      } catch (err) {
+        console.error("Error in getting token:", err);
+      }
+    }
+
     // Login
     document.getElementById("loginBtn").addEventListener("click", () => {
       const email = document.getElementById("loginEmail").value;
       const password = document.getElementById("loginPassword").value;
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
+        .then((userCredential) => {
+          requestPermissionAndSaveToken(userCredential.user.uid);
           window.location.href = "dashboard.html";
         })
         .catch((error) => {
@@ -216,8 +244,9 @@
       const email = document.getElementById("signupEmail").value;
       const password = document.getElementById("signupPassword").value;
       createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
+        .then((userCredential) => {
           alert("साइनअप यशस्वी 🎉");
+          requestPermissionAndSaveToken(userCredential.user.uid);
           window.location.href = "dashboard.html";
         })
         .catch((error) => {
@@ -228,7 +257,8 @@
     // Google Login
     document.getElementById("googleLoginBtn").addEventListener("click", () => {
       signInWithPopup(auth, provider)
-        .then(() => {
+        .then((result) => {
+          requestPermissionAndSaveToken(result.user.uid);
           window.location.href = "dashboard.html";
         })
         .catch((error) => {
