@@ -5,7 +5,7 @@ firebase.initializeApp({
   apiKey: "AIzaSyCiFiazAT4lummi9MJTkDOU_ZhpgeBHXGU",
   authDomain: "agrimitra-6b944.firebaseapp.com",
   projectId: "agrimitra-6b944",
-  storageBucket: "agrimitra-6b944.firebasestorage.app",
+  storageBucket: "agrimitra-6b944.appspot.com",
   messagingSenderId: "190603132023",
   appId: "1:190603132023:web:dc3f122284891e180f9a72",
   measurementId: "G-7MXB81G9PW"
