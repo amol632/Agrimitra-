@@ -1,0 +1,27 @@
+name: Send Notifications
+
+on:
+  schedule:
+    - cron: "0 9 * * *"   # सकाळी 9 वाजता
+    - cron: "0 18 * * *"  # संध्याकाळी 6 वाजता
+  workflow_dispatch:       # manually चालवण्यासाठी
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install firebase-admin
+
+      - name: Run Notify Script
+        run: node .github/scripts/notify.js
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
