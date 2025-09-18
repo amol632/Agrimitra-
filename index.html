@@ -209,19 +209,28 @@
     async function requestPermissionAndSaveToken(userId) {
       try {
         const permission = await Notification.requestPermission();
+        console.log("🔔 Permission:", permission);
+
         if (permission === "granted") {
           const token = await getToken(messaging, {
             vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
           });
-          console.log("FCM Token:", token);
+
+          console.log("✅ Token मिळाला:", token);
 
           if (userId && token) {
             await setDoc(doc(db, "fcmTokens", userId), { token: token });
-            console.log("Token Firestore मध्ये सेव झाला ✅");
+            console.log("🎉 Token Firestore मध्ये सेव झाला");
+            alert("🎉 Token Firestore मध्ये सेव झाला: " + token.substring(0, 25) + "...");
+          } else {
+            alert("⚠️ Token मिळाला नाही किंवा UserID नाही");
           }
+        } else {
+          alert("❌ Notification Permission Deny झाली");
         }
       } catch (err) {
         console.error("Error in getting token:", err);
+        alert("🚨 Error: " + err.message);
       }
     }
 
