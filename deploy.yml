@@ -3,25 +3,23 @@ name: Deploy to Firebase
 on:
   push:
     branches:
-      - main   # main branch वर push झाला की auto-deploy होईल
+      - main   # main branch वर push झालं की deploy होईल
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
 
-      - name: Install Firebase CLI
+      - name: Install Firebase Tools
         run: npm install -g firebase-tools
 
-      - name: Firebase Deploy
-        run: firebase deploy --only functions
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Deploy to Firebase
+        run: firebase deploy --only hosting,functions --non-interactive --token "${{ secrets.FIREBASE_TOKEN }}"
