@@ -1,5 +1,6 @@
-importScripts("https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js");
-importScripts("https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js");
+// firebase-messaging-sw.js
+importScripts("https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js");
+importScripts("https://www.gstatic.com/firebasejs/9.6.10/firebase-messaging.js");
 
 firebase.initializeApp({
   apiKey: "AIzaSyCiFiazAT4lummi9MJTkDOU_ZhpgeBHXGU",
@@ -14,10 +15,10 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  console.log("📩 Background message received:", payload);
+  console.log("📩 Background message:", payload);
 
   self.registration.showNotification(payload.notification.title, {
     body: payload.notification.body,
-    icon: "/icon.png"
+    icon: "/icon.png" // 👉 तुझ्या लोगोचा path टाक
   });
 });
