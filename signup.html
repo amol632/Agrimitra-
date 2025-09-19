@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriMitra - Sign Up</title>
+</head>
+<body>
+  <h2>नवीन खाते तयार करा</h2>
+  <input type="email" id="email" placeholder="ईमेल">
+  <input type="password" id="password" placeholder="पासवर्ड">
+  <button onclick="signup()">Sign Up</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+    import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-messaging.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    // 🔥 Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCiFiazAT4lummi9MJTkDOU_ZhpgeBHXGU",
+      authDomain: "agrimitra-6b944.firebaseapp.com",
+      projectId: "agrimitra-6b944",
+      storageBucket: "agrimitra-6b944.appspot.com",
+      messagingSenderId: "190603132023",
+      appId: "1:190603132023:web:dc3f122284891e180f9a72",
+      measurementId: "G-7MXB81G9PW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const messaging = getMessaging(app);
+    const db = getFirestore(app);
+
+    // ✅ Sign Up Function
+    async function signup() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        alert("✅ खाते तयार झाले!");
+
+        // 🔔 Notification Permission घ्या
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          const token = await getToken(messaging, {
+            vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
+          });
+          if (token) {
+            await setDoc(doc(db, "fcmTokens", user.uid), { token });
+            console.log("✅ Token Firestore मध्ये सेव्ह झाला:", token);
+          }
+        }
+      } catch (error) {
+        alert("❌ त्रुटी: " + error.message);
+      }
+    }
+
+    window.signup = signup;
+  </script>
+</body>
+</html>
