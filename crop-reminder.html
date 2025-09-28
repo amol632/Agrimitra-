@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌱 Crop Reminder - AgriMitra</title>
+</head>
+<body>
+  <header>
+    <h1>🌱 AgriMitra Crop Reminder</h1>
+  </header>
+
+  <main>
+    <p>👉 खालील यादीतून पीक निवडा आणि महिन्यानुसार reminder मिळवा.</p>
+
+    <select id="cropSelect">
+      <option value="">-- पीक निवडा --</option>
+      <option>गहू</option>
+      <option>मका</option>
+      <option>तांदूळ</option>
+      <option>ज्वारी</option>
+      <option>बाजरी</option>
+      <option>हरभरा</option>
+      <option>तूर</option>
+      <option>मूग</option>
+      <option>उडीद</option>
+      <option>मसूर</option>
+      <option>सोयाबीन</option>
+      <option>सूर्यफूल</option>
+      <option>करडई</option>
+      <option>तिळ</option>
+      <option>मोहरी</option>
+      <option>शेंगदाणे</option>
+      <option>आंबा</option>
+      <option>केळे</option>
+      <option>द्राक्षे</option>
+      <option>संत्रा</option>
+      <option>सफरचंद</option>
+      <option>अननस</option>
+      <option>नारळ</option>
+      <option>कलिंगड</option>
+      <option>स्टोबेरी</option>
+      <option>बटाटा</option>
+      <option>टोमॅटो</option>
+      <option>काकडी</option>
+      <option>कोबी</option>
+      <option>फ्लॉवर</option>
+      <option>मिरची</option>
+      <option>कांदा</option>
+      <option>लसूण</option>
+      <option>गाजर</option>
+      <option>वांगी</option>
+      <option>दोडका</option>
+      <option>पालक</option>
+      <option>मशरूम</option>
+      <option>ऊस</option>
+      <option>कॉफी</option>
+      <option>चहा</option>
+      <option>कापूस</option>
+      <option>तंबाखू</option>
+    </select>
+
+    <button id="setReminder">🔔 Reminder सेट करा</button>
+
+    <section id="reminderInfo"></section>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-messaging.js"></script>
+  <script src="js/reminder.js"></script>
+</body>
+</html>
