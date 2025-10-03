@@ -7,19 +7,17 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #ffe0b2, #ffcc80); /* हलका केसरी लूक */
+      background: linear-gradient(135deg, #ffe0b2, #ffcc80);
       margin: 0;
       padding: 20px;
       text-align: center;
       min-height: 100vh;
     }
-
     h2 {
-      color: #e65100; /* गडद केसरी */
+      color: #e65100;
       margin-bottom: 20px;
       font-size: 28px;
     }
-
     .crop-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -27,7 +25,6 @@
       max-width: 900px;
       margin: auto;
     }
-
     .crop-btn {
       padding: 15px;
       font-size: 18px;
@@ -35,17 +32,15 @@
       border: none;
       border-radius: 15px;
       cursor: pointer;
-      background: #ff7043; /* केसरी बटण */
+      background: #ff7043;
       color: white;
       box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
       transition: 0.3s;
     }
-
     .crop-btn:hover {
-      background: #e64a19; /* hover साठी गडद केसरी */
+      background: #e64a19;
       transform: scale(1.05);
     }
-
     footer {
       margin-top: 30px;
       font-size: 14px;
@@ -57,6 +52,7 @@
   <h2>🌱 कृपया आपलं पीक निवडा</h2>
 
   <div class="crop-container">
+    <!-- 43 Crops -->
     <button class="crop-btn" onclick="selectCrop('कापूस')">कापूस</button>
     <button class="crop-btn" onclick="selectCrop('सोयाबीन')">सोयाबीन</button>
     <button class="crop-btn" onclick="selectCrop('तांदूळ')">तांदूळ</button>
@@ -72,16 +68,86 @@
     <button class="crop-btn" onclick="selectCrop('बटाटा')">बटाटा</button>
     <button class="crop-btn" onclick="selectCrop('टोमॅटो')">टोमॅटो</button>
     <button class="crop-btn" onclick="selectCrop('फुलशेती')">फुलशेती</button>
+    <button class="crop-btn" onclick="selectCrop('आलं')">आलं</button>
+    <button class="crop-btn" onclick="selectCrop('लसूण')">लसूण</button>
+    <button class="crop-btn" onclick="selectCrop('हळद')">हळद</button>
+    <button class="crop-btn" onclick="selectCrop('मिरची')">मिरची</button>
+    <button class="crop-btn" onclick="selectCrop('गाजर')">गाजर</button>
+    <button class="crop-btn" onclick="selectCrop('कोबी')">कोबी</button>
+    <button class="crop-btn" onclick="selectCrop('फुलकोबी')">फुलकोबी</button>
+    <button class="crop-btn" onclick="selectCrop('वांगी')">वांगी</button>
+    <button class="crop-btn" onclick="selectCrop('भेंडी')">भेंडी</button>
+    <button class="crop-btn" onclick="selectCrop('दुधी भोपळा')">दुधी भोपळा</button>
+    <button class="crop-btn" onclick="selectCrop('कारले')">कारले</button>
+    <button class="crop-btn" onclick="selectCrop('दोडका')">दोडका</button>
+    <button class="crop-btn" onclick="selectCrop('कलिंगड')">कलिंगड</button>
+    <button class="crop-btn" onclick="selectCrop('खरबूज')">खरबूज</button>
+    <button class="crop-btn" onclick="selectCrop('डाळिंब')">डाळिंब</button>
+    <button class="crop-btn" onclick="selectCrop('आंबा')">आंबा</button>
+    <button class="crop-btn" onclick="selectCrop('सफरचंद')">सफरचंद</button>
+    <button class="crop-btn" onclick="selectCrop('केळी')">केळी</button>
+    <button class="crop-btn" onclick="selectCrop('द्राक्षे')">द्राक्षे</button>
+    <button class="crop-btn" onclick="selectCrop('चिकू')">चिकू</button>
+    <button class="crop-btn" onclick="selectCrop('पपई')">पपई</button>
+    <button class="crop-btn" onclick="selectCrop('संत्री')">संत्री</button>
+    <button class="crop-btn" onclick="selectCrop('लिंबू')">लिंबू</button>
+    <button class="crop-btn" onclick="selectCrop('पेरू')">पेरू</button>
+    <button class="crop-btn" onclick="selectCrop('सीताफळ')">सीताफळ</button>
+    <button class="crop-btn" onclick="selectCrop('नारळ')">नारळ</button>
   </div>
 
   <footer>© 2025 AgriMitra | शेतकऱ्यांचा खरा मित्र 🚜</footer>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging.js"></script>
+
   <script>
-    function selectCrop(crop) {
+    // 🔹 तुमचा Firebase Config
+    const firebaseConfig = {
+      apiKey: "d6cb30de98390418ccedb20e0c1696c7",
+      authDomain: "agrimitra-6b944.firebaseapp.com",
+      projectId: "agrimitra-6b944",
+      storageBucket: "agrimitra-6b944.appspot.com",
+      messagingSenderId: "798706791966",
+      appId: "1:798706791966:web:xxxxxxxxxxx"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const messaging = firebase.messaging();
+
+    // Crop Select Function
+    async function selectCrop(crop) {
       localStorage.setItem("selectedCrop", crop);
+
+      // Save crop to Firestore
+      await db.collection("crops").add({
+        crop: crop,
+        date: new Date().toISOString()
+      });
+
       alert("✅ आपण '" + crop + "' निवडलं आहे.");
-      window.location.href = "dashboard.html"; // परत डॅशबोर्डवर
+      window.location.href = "dashboard.html";
     }
+
+    // Get Notification Permission
+    async function requestPermission() {
+      try {
+        const token = await messaging.getToken({
+          vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
+        });
+        if (token) {
+          console.log("FCM Token:", token);
+          await db.collection("users").add({ token });
+        }
+      } catch (error) {
+        console.error("Permission Error:", error);
+      }
+    }
+
+    requestPermission();
   </script>
 </body>
 </html>
