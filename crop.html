@@ -199,25 +199,22 @@
       "अंजीर": "औषधी व पौष्टिक फळ, उष्ण हवामान योग्य."
     };
 
-          // Crop buttons
-    const cropContainer = document.getElementById('cropContainer');
-    Object.keys(crops).forEach(crop => {
-      const btn = document.createElement('button');
-      btn.className = 'crop-btn';
-      btn.innerText = crop;
-      btn.onclick = () => showCropInfo(crop);
-      cropContainer.appendChild(btn);
-    });
+          
+    // Crop Select Function
+    async function selectCrop(crop) {
+      localStorage.setItem("selectedCrop", crop);
 
-    async function showCropInfo(crop) {
-      document.getElementById("cropName").innerText = crop;
-      document.getElementById("cropInfo").innerText = crops[crop];
-      document.getElementById("infoBox").style.display = "block";
-
+      // Firestore मध्ये Save
       await db.collection("crops").add({
         crop: crop,
         date: new Date().toISOString()
       });
+
+      // Short Info दाखवा
+      let info = cropInfo[crop] || "या पिकाची माहिती उपलब्ध नाही.";
+      alert("✅ आपण '" + crop + "' निवडलं आहे.\n\nℹ️ " + info);
+
+      window.location.href = "dashboard.html";
     }
 
     // Notification Permission
@@ -231,9 +228,10 @@
           await db.collection("users").add({ token });
         }
       } catch (error) {
-        console.error("Notification Permission Denied:", error);
+        console.error("Permission Error:", error);
       }
     }
+
     requestPermission();
   </script>
 </body>
