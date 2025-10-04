@@ -199,14 +199,22 @@
       "अंजीर": "औषधी व पौष्टिक फळ, उष्ण हवामान योग्य."
     };
 
-    async function selectCrop(crop) {
+       async function selectCrop(crop) {
       localStorage.setItem("selectedCrop", crop);
-      await db.collection("crops").add({ crop, date: new Date().toISOString() });
+
+      await db.collection("crops").add({
+        crop: crop,
+        date: new Date().toISOString()
+      });
+
       const info = cropInfo[crop] || "या पिकाची माहिती उपलब्ध नाही.";
       const box = document.getElementById("infoBox");
       box.innerHTML = `<strong>✅ आपण "${crop}" निवडलं आहे.</strong><br><br>🌾 <b>माहिती:</b> ${info}`;
       box.style.display = "block";
-      setTimeout(() => { window.location.href = "dashboard.html"; }, 3000);
+
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 3000); // 3 सेकंदांनी डॅशबोर्डवर जा
     }
 
     async function requestPermission() {
@@ -215,15 +223,8 @@
           vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
         });
         if (token) await db.collection("users").add({ token });
-      } catch (error) { console.error("Permission Error:", error); }
-    }
-
-    function searchCrops() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
-      const buttons = document.getElementsByClassName('crop-btn');
-      for (let btn of buttons) {
-        const txt = btn.textContent.toLowerCase();
-        btn.style.display = txt.includes(input) ? "inline-block" : "none";
+      } catch (error) {
+        console.error("Permission Error:", error);
       }
     }
 
@@ -231,3 +232,4 @@
   </script>
 </body>
 </html>
+
