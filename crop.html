@@ -41,6 +41,26 @@
       background: #e64a19;
       transform: scale(1.05);
     }
+
+    /* 🔸 Info Box */
+    #infoBox {
+      display: none;
+      background: #fff3e0;
+      color: #bf360c;
+      border: 2px solid #ffb74d;
+      border-radius: 15px;
+      padding: 15px;
+      margin: 25px auto;
+      max-width: 400px;
+      font-size: 17px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      animation: fadeIn 0.4s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     footer {
       margin-top: 30px;
       font-size: 14px;
@@ -51,8 +71,8 @@
 <body>
   <h2>🌱 कृपया आपलं पीक निवडा</h2>
 
-  <div class="crop-container">
-    <!-- 43 Crops -->
+  <div class="crop-container" id="cropList">
+    <!-- सर्व पिकांची बटणे -->
     <button class="crop-btn" onclick="selectCrop('कापूस')">कापूस</button>
     <button class="crop-btn" onclick="selectCrop('सोयाबीन')">सोयाबीन</button>
     <button class="crop-btn" onclick="selectCrop('तांदूळ')">तांदूळ</button>
@@ -100,15 +120,16 @@
     <button class="crop-btn" onclick="selectCrop('अंजीर')">अंजीर</button>
   </div>
 
+  <!-- 🔸 Short Info Box -->
+  <div id="infoBox"></div>
+
   <footer>© 2025 AgriMitra | शेतकऱ्यांचा खरा मित्र 🚜</footer>
 
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging.js"></script>
 
   <script>
-    // 🔹 Firebase Config
     const firebaseConfig = {
       apiKey: "d6cb30de98390418ccedb20e0c1696c7",
       authDomain: "agrimitra-6b944.firebaseapp.com",
@@ -122,7 +143,6 @@
     const db = firebase.firestore();
     const messaging = firebase.messaging();
 
-    // ✅ 43 पिकांची Short माहिती
     const cropInfo = {
       "कापूस": "जून-जुलै पेरणी, खत वेळेवर द्या, तणनियंत्रण करा.",
       "सोयाबीन": "खरीप पिक, जून-जुलै पेरणी, मध्यम पाऊस आवश्यक.",
@@ -171,33 +191,30 @@
       "अंजीर": "औषधी व पौष्टिक फळ, उष्ण हवामान योग्य."
     };
 
-    // Crop Select Function
     async function selectCrop(crop) {
       localStorage.setItem("selectedCrop", crop);
 
-      // Firestore मध्ये Save
       await db.collection("crops").add({
         crop: crop,
         date: new Date().toISOString()
       });
 
-      // Short Info दाखवा
-      let info = cropInfo[crop] || "या पिकाची माहिती उपलब्ध नाही.";
-      alert("✅ आपण '" + crop + "' निवडलं आहे.\n\nℹ️ " + info);
+      const info = cropInfo[crop] || "या पिकाची माहिती उपलब्ध नाही.";
+      const box = document.getElementById("infoBox");
+      box.innerHTML = `<strong>✅ आपण "${crop}" निवडलं आहे.</strong><br><br>🌾 <b>माहिती:</b> ${info}`;
+      box.style.display = "block";
 
-      window.location.href = "dashboard.html";
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 3000); // 3 सेकंदांनी डॅशबोर्डवर जा
     }
 
-    // Notification Permission
     async function requestPermission() {
       try {
         const token = await messaging.getToken({
           vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
         });
-        if (token) {
-          console.log("FCM Token:", token);
-          await db.collection("users").add({ token });
-        }
+        if (token) await db.collection("users").add({ token });
       } catch (error) {
         console.error("Permission Error:", error);
       }
