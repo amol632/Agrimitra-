@@ -18,6 +18,16 @@
       margin-bottom: 20px;
       font-size: 28px;
     }
+    input[type="text"] {
+      padding: 12px;
+      width: 80%;
+      max-width: 400px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #e65100;
+      margin-bottom: 20px;
+      outline: none;
+    }
     .crop-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -41,8 +51,6 @@
       background: #e64a19;
       transform: scale(1.05);
     }
-
-    /* 🔸 Info Box */
     #infoBox {
       display: none;
       background: #fff3e0;
@@ -60,7 +68,6 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     footer {
       margin-top: 30px;
       font-size: 14px;
@@ -70,6 +77,8 @@
 </head>
 <body>
   <h2>🌱 कृपया आपलं पीक निवडा</h2>
+
+  <input type="text" id="searchInput" onkeyup="searchCrops()" placeholder="🔍 पिक शोधा...">
 
   <div class="crop-container" id="cropList">
     <!-- सर्व पिकांची बटणे -->
@@ -120,7 +129,6 @@
     <button class="crop-btn" onclick="selectCrop('अंजीर')">अंजीर</button>
   </div>
 
-  <!-- 🔸 Short Info Box -->
   <div id="infoBox"></div>
 
   <footer>© 2025 AgriMitra | शेतकऱ्यांचा खरा मित्र 🚜</footer>
@@ -193,20 +201,12 @@
 
     async function selectCrop(crop) {
       localStorage.setItem("selectedCrop", crop);
-
-      await db.collection("crops").add({
-        crop: crop,
-        date: new Date().toISOString()
-      });
-
+      await db.collection("crops").add({ crop, date: new Date().toISOString() });
       const info = cropInfo[crop] || "या पिकाची माहिती उपलब्ध नाही.";
       const box = document.getElementById("infoBox");
       box.innerHTML = `<strong>✅ आपण "${crop}" निवडलं आहे.</strong><br><br>🌾 <b>माहिती:</b> ${info}`;
       box.style.display = "block";
-
-      setTimeout(() => {
-        window.location.href = "dashboard.html";
-      }, 3000); // 3 सेकंदांनी डॅशबोर्डवर जा
+      setTimeout(() => { window.location.href = "dashboard.html"; }, 3000);
     }
 
     async function requestPermission() {
@@ -215,8 +215,15 @@
           vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
         });
         if (token) await db.collection("users").add({ token });
-      } catch (error) {
-        console.error("Permission Error:", error);
+      } catch (error) { console.error("Permission Error:", error); }
+    }
+
+    function searchCrops() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const buttons = document.getElementsByClassName('crop-btn');
+      for (let btn of buttons) {
+        const txt = btn.textContent.toLowerCase();
+        btn.style.display = txt.includes(input) ? "inline-block" : "none";
       }
     }
 
