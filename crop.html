@@ -199,37 +199,42 @@
       "अंजीर": "औषधी व पौष्टिक फळ, उष्ण हवामान योग्य."
     };
 
-       async function selectCrop(crop) {
-      localStorage.setItem("selectedCrop", crop);
+          // Crop buttons
+    const cropContainer = document.getElementById('cropContainer');
+    Object.keys(crops).forEach(crop => {
+      const btn = document.createElement('button');
+      btn.className = 'crop-btn';
+      btn.innerText = crop;
+      btn.onclick = () => showCropInfo(crop);
+      cropContainer.appendChild(btn);
+    });
+
+    async function showCropInfo(crop) {
+      document.getElementById("cropName").innerText = crop;
+      document.getElementById("cropInfo").innerText = crops[crop];
+      document.getElementById("infoBox").style.display = "block";
 
       await db.collection("crops").add({
         crop: crop,
         date: new Date().toISOString()
       });
-
-      const info = cropInfo[crop] || "या पिकाची माहिती उपलब्ध नाही.";
-      const box = document.getElementById("infoBox");
-      box.innerHTML = `<strong>✅ आपण "${crop}" निवडलं आहे.</strong><br><br>🌾 <b>माहिती:</b> ${info}`;
-      box.style.display = "block";
-
-      setTimeout(() => {
-        window.location.href = "dashboard.html";
-      }, 3000); // 3 सेकंदांनी डॅशबोर्डवर जा
     }
 
+    // Notification Permission
     async function requestPermission() {
       try {
         const token = await messaging.getToken({
           vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
         });
-        if (token) await db.collection("users").add({ token });
+        if (token) {
+          console.log("FCM Token:", token);
+          await db.collection("users").add({ token });
+        }
       } catch (error) {
-        console.error("Permission Error:", error);
+        console.error("Notification Permission Denied:", error);
       }
     }
-
     requestPermission();
   </script>
 </body>
 </html>
-
