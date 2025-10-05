@@ -199,31 +199,48 @@
       "अंजीर": "औषधी व पौष्टिक फळ, उष्ण हवामान योग्य."
     };
 
-          
 <script>
-async function requestPermission() {
-  try {
-    const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      const token = await messaging.getToken({
-        vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
-      });
-      if (token) {
-        await db.collection("users").add({ token });
-        alert("✅ Notification Permission मिळाली");
-      }
-    } else if (permission === "denied") {
-      alert("❌ Notification Permission Deny झाली.\nकृपया Site Settings मध्ये जाऊन Allow करा.");
-    } else {
-      alert("ℹ️ Notification Permission अजून दिली नाही.");
-    }
-  } catch (error) {
-    console.error("Permission Error:", error);
-    alert("⚠️ Permission Error: " + error.message);
-  }
-}
+  async function selectCrop(crop) {
+    localStorage.setItem("selectedCrop", crop);
 
-requestPermission();
+    await db.collection("crops").add({
+      crop: crop,
+      date: new Date().toISOString()
+    });
+
+    const info = cropInfo[crop] || "या पिकाची माहिती उपलब्ध नाही.";
+    const box = document.getElementById("infoBox");
+    box.innerHTML = `<strong>✅ आपण "${crop}" निवडलं आहे.</strong><br><br>🌾 <b>माहिती:</b> ${info}`;
+    box.style.display = "block";
+
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 3000); // 3 सेकंदांनी डॅशबोर्डवर जा
+  }
+
+  async function requestPermission() {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        const token = await messaging.getToken({
+          vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
+        });
+        if (token) {
+          await db.collection("users").add({ token });
+          alert("✅ Notification Permission मिळाली");
+        }
+      } else if (permission === "denied") {
+        alert("❌ Notification Permission Deny झाली.\nकृपया Site Settings मध्ये जाऊन Allow करा.");
+      } else {
+        alert("ℹ️ Notification Permission अजून दिली नाही.");
+      }
+    } catch (error) {
+      console.error("Permission Error:", error);
+      alert("⚠️ Permission Error: " + error.message);
+    }
+  }
+
+  requestPermission();
 </script>
 </body>
 </html>
