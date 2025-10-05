@@ -200,39 +200,21 @@
     };
 
           
-    // Crop Select Function
-    async function selectCrop(crop) {
+        function selectCrop(crop) {
       localStorage.setItem("selectedCrop", crop);
-
-      // Firestore मध्ये Save
-      await db.collection("crops").add({
-        crop: crop,
-        date: new Date().toISOString()
-      });
-
-      // Short Info दाखवा
-      let info = cropInfo[crop] || "या पिकाची माहिती उपलब्ध नाही.";
-      alert("✅ आपण '" + crop + "' निवडलं आहे.\n\nℹ️ " + info);
-
-      window.location.href = "dashboard.html";
+      const infoBox = document.getElementById("cropInfo");
+      infoBox.style.display = "block";
+      infoBox.innerHTML = `<h3>🌾 ${crop}</h3><p>${cropData[crop] || "या पिकाची माहिती लवकरच उपलब्ध होईल."}</p>`;
     }
 
-    // Notification Permission
-    async function requestPermission() {
-      try {
-        const token = await messaging.getToken({
-          vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
-        });
-        if (token) {
-          console.log("FCM Token:", token);
-          await db.collection("users").add({ token });
-        }
-      } catch (error) {
-        console.error("Permission Error:", error);
+    function searchCrops() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const buttons = document.getElementsByClassName('crop-btn');
+      for (let btn of buttons) {
+        const txt = btn.textContent.toLowerCase();
+        btn.style.display = txt.includes(input) ? "inline-block" : "none";
       }
     }
-
-    requestPermission();
   </script>
 </body>
 </html>
