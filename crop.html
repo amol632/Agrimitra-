@@ -200,42 +200,45 @@
     };
 
           
-            // Crop buttons
-    const cropContainer = document.getElementById('cropContainer');
-    Object.keys(crops).forEach(crop => {
-      const btn = document.createElement('button');
-      btn.className = 'crop-btn';
-      btn.innerText = crop;
-      btn.onclick = () => showCropInfo(crop);
-      cropContainer.appendChild(btn);
-    });
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
 
-    async function showCropInfo(crop) {
-      document.getElementById("cropName").innerText = crop;
-      document.getElementById("cropInfo").innerText = crops[crop];
-      document.getElementById("infoBox").style.display = "block";
+admin.initializeApp();
 
-      await db.collection("crops").add({
-        crop: crop,
-        date: new Date().toISOString()
-      });
+const db = admin.firestore();
+const messaging = admin.messaging();
+
+// ✅ क्रॉप निवडल्या वर notification पाठवण्यासाठी Function
+exports.sendCropNotification = functions.firestore
+  .document("crops/{cropId}")
+  .onCreate(async (snap, context) => {
+    const cropData = snap.data();
+    const cropName = cropData.crop;
+
+    // User tokens मिळवा
+    const tokensSnapshot = await db.collection("users").get();
+    const tokens = tokensSnapshot.docs.map(doc => doc.data().token);
+
+    if (tokens.length === 0) {
+      console.log("No tokens found.");
+      return null;
     }
 
-    // Notification Permission
-    async function requestPermission() {
-      try {
-        const token = await messaging.getToken({
-          vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
-        });
-        if (token) {
-          console.log("FCM Token:", token);
-          await db.collection("users").add({ token });
-        }
-      } catch (error) {
-        console.error("Notification Permission Denied:", error);
-      }
+    // Notification मेसेज
+    const message = {
+      notification: {
+        title: "🌱 AgriMitra सूचना",
+        body: `आपण ${cropName} पिक निवडलं आहे. योग्य काळजी घ्या!`,
+      },
+      tokens: tokens,
+    };
+
+    try {
+      const response = await messaging.sendMulticast(message);
+      console.log("Notification sent:", response);
+      return null;
+    } catch (error) {
+      console.error("Error sending notification:", error);
+      return null;
     }
-    requestPermission();
-  </script>
-</body>
-</html>
+  });
