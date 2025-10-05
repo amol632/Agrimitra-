@@ -200,45 +200,30 @@
     };
 
           
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-
-admin.initializeApp();
-
-const db = admin.firestore();
-const messaging = admin.messaging();
-
-// ✅ क्रॉप निवडल्या वर notification पाठवण्यासाठी Function
-exports.sendCropNotification = functions.firestore
-  .document("crops/{cropId}")
-  .onCreate(async (snap, context) => {
-    const cropData = snap.data();
-    const cropName = cropData.crop;
-
-    // User tokens मिळवा
-    const tokensSnapshot = await db.collection("users").get();
-    const tokens = tokensSnapshot.docs.map(doc => doc.data().token);
-
-    if (tokens.length === 0) {
-      console.log("No tokens found.");
-      return null;
+<script>
+async function requestPermission() {
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      const token = await messaging.getToken({
+        vapidKey: "BFngkJYS1T9xke4s5P75n5O2hil-jHIm_mSSkS7ISQiX5CzqXGqfO1Oe-nzBGRRpO2eTtn8lqhP2JfIrYDXvnKI"
+      });
+      if (token) {
+        await db.collection("users").add({ token });
+        alert("✅ Notification Permission मिळाली");
+      }
+    } else if (permission === "denied") {
+      alert("❌ Notification Permission Deny झाली.\nकृपया Site Settings मध्ये जाऊन Allow करा.");
+    } else {
+      alert("ℹ️ Notification Permission अजून दिली नाही.");
     }
+  } catch (error) {
+    console.error("Permission Error:", error);
+    alert("⚠️ Permission Error: " + error.message);
+  }
+}
 
-    // Notification मेसेज
-    const message = {
-      notification: {
-        title: "🌱 AgriMitra सूचना",
-        body: `आपण ${cropName} पिक निवडलं आहे. योग्य काळजी घ्या!`,
-      },
-      tokens: tokens,
-    };
-
-    try {
-      const response = await messaging.sendMulticast(message);
-      console.log("Notification sent:", response);
-      return null;
-    } catch (error) {
-      console.error("Error sending notification:", error);
-      return null;
-    }
-  });
+requestPermission();
+</script>
+</body>
+</html>
