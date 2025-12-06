@@ -1,182 +1,110 @@
 <!DOCTYPE html>
-<html lang="mr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Chat - AgriMitra</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f0f4f7;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    header {
-      background: #FF9800; /* 🔶 केसरी */
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-    }
-    #chat-container {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-    }
-    .msg {
-      max-width: 70%;
-      margin-bottom: 10px;
-      padding: 10px 15px;
-      border-radius: 15px;
-      line-height: 1.4;
-    }
-    .user {
-      background: #FFE0B2; /* हलका केसरी */
-      align-self: flex-end;
-      text-align: right;
-    }
-    .bot {
-      background: #ffffff;
-      align-self: flex-start;
-      border: 1px solid #ddd;
-    }
-    #input-container {
-      display: flex;
-      padding: 10px;
-      background: #fff;
-      border-top: 1px solid #ccc;
-    }
-    #user-input {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      outline: none;
-    }
-    #send-btn, #upload-btn {
-      margin-left: 10px;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 50%;
-      background: #FF9800; /* 🔶 केसरी */
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    #send-btn:hover, #upload-btn:hover {
-      background: #e68900; /* hover साठी गडद केसरी */
-    }
-    #file-input {
-      display: none;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AgriMitra AI Chat</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+}
+.chat-box {
+    width: 90%;
+    max-width: 500px;
+    background: white;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 10px;
+}
+.messages {
+    height: 350px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    background: #fafafa;
+}
+.message {
+    margin-bottom: 12px;
+}
+.user {
+    text-align: right;
+    color: blue;
+}
+.bot {
+    text-align: left;
+    color: green;
+}
+input {
+    width: 70%;
+    padding: 10px;
+    margin-top: 10px;
+}
+button {
+    padding: 10px 15px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+</style>
 </head>
+
 <body>
-  <header>🚜 AgriMitra AI Chat</header>
-  <div id="chat-container">
-    <div class="msg bot">Hello Amol 👋 मी तुमचा शेतीसाठी AI मदतनीस आहे. काहीही विचारा.</div>
-  </div>
 
-  <div id="input-container">
-    <input type="text" id="user-input" placeholder="आपला प्रश्न टाइप करा...">
-    <button id="upload-btn">📷</button>
-    <input type="file" id="file-input" accept="image/*">
-    <button id="send-btn">➤</button>
-  </div>
+<div class="chat-box">
+    <h2>🌾 AgriMitra AI Chat</h2>
 
-  <script>
-    const API_KEY = "AIzaSyCd5HoUUIblR19CI742h6wNTmsVlEfKd8Q";
-    const chatContainer = document.getElementById("chat-container");
-    const userInput = document.getElementById("user-input");
-    const sendBtn = document.getElementById("send-btn");
-    const uploadBtn = document.getElementById("upload-btn");
-    const fileInput = document.getElementById("file-input");
+    <div class="messages" id="messages"></div>
 
-    function addMessage(text, sender) {
-      const msgDiv = document.createElement("div");
-      msgDiv.classList.add("msg", sender);
-      msgDiv.textContent = text;
-      chatContainer.appendChild(msgDiv);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+    <input type="text" id="userInput" placeholder="काय मदत करू?" />
+    <button onclick="sendMessage()">Send</button>
+</div>
 
-    async function sendMessage() {
-      const message = userInput.value.trim();
-      if (!message) return;
-      addMessage(message, "user");
-      userInput.value = "";
+<script>
+async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const msg = input.value.trim();
+    if (!msg) return;
 
-      try {
+    addMessage(msg, "user");
+    input.value = "";
+
+    const apiKey = "YOUR_API_KEY_HERE";  // 🔥 इथे Gemini API Key टाका
+
+    try {
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: message }] }]
-            })
-          }
-        );
-        const data = await response.json();
-        const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "क्षमस्व, मला समजलं नाही.";
-        addMessage(reply, "bot");
-      } catch (error) {
-        addMessage("❌ त्रुटी आली. पुन्हा प्रयत्न करा.", "bot");
-      }
-    }
-
-    async function sendImage(file) {
-      addMessage("📷 फोटो अपलोड झाला आहे.", "user");
-      const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          const base64Image = reader.result.split(",")[1];
-          const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + apiKey,
             {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                contents: [
-                  {
-                    parts: [
-                      { text: "या फोटोबद्दल माहिती द्या (शेतीसाठी उपयुक्त)." },
-                      {
-                        inlineData: {
-                          mimeType: file.type,
-                          data: base64Image
-                        }
-                      }
-                    ]
-                  }
-                ]
-              })
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ role: "user", parts: [{ text: msg }] }]
+                })
             }
-          );
-          const data = await response.json();
-          const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "फोटो समजला नाही.";
-          addMessage(reply, "bot");
-        } catch (error) {
-          addMessage("❌ फोटो process करताना त्रुटी आली.", "bot");
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+        );
 
-    sendBtn.addEventListener("click", sendMessage);
-    userInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") sendMessage();
-    });
-    uploadBtn.addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (file) sendImage(file);
-    });
-  </script>
+        const data = await response.json();
+        const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "क्षमस्व, मला समजलं नाही.";
+
+        addMessage(botReply, "bot");
+    } catch (err) {
+        addMessage("🚫 Error: API Key किंवा इंटरनेट तपासा", "bot");
+        console.error(err);
+    }
+}
+
+function addMessage(text, sender) {
+    const box = document.getElementById("messages");
+    const div = document.createElement("div");
+    div.className = "message " + sender;
+    div.innerHTML = text;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+}
+</script>
+
 </body>
 </html>
