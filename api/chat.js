@@ -5,9 +5,14 @@ export default async function handler(req, res) {
 
   try {
     const { message, image } = req.body;
+
     const apiKey = process.env.GEMINI_API_KEY;
 
-    let parts = [];
+    if (!apiKey) {
+      return res.status(500).json({ error: "API Key missing" });
+    }
+
+    const parts = [];
 
     if (message) {
       parts.push({ text: message });
@@ -23,13 +28,10 @@ export default async function handler(req, res) {
     }
 
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": apiKey
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts }]
         })
@@ -37,12 +39,13 @@ export default async function handler(req, res) {
     );
 
     const data = await response.json();
+
     const reply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "उत्तर मिळालं नाही.";
+      "माफ करा, उत्तर समजलं नाही.";
 
-    res.json({ reply });
+    res.status(200).json({ reply });
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: err.message });
   }
 }
