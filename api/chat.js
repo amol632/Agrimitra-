@@ -1,16 +1,12 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST allowed" });
+    return res.status(405).json({ message: "Only POST allowed" });
   }
 
   try {
     const { message, image } = req.body;
 
     const apiKey = process.env.GEMINI_API_KEY;
-
-    if (!apiKey) {
-      return res.status(500).json({ error: "API Key missing" });
-    }
 
     const parts = [];
 
@@ -27,7 +23,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const response = await fetch(
+    const geminiResp = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
@@ -38,14 +34,14 @@ export default async function handler(req, res) {
       }
     );
 
-    const data = await response.json();
+    const data = await geminiResp.json();
 
     const reply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "माफ करा, उत्तर समजलं नाही.";
+      "माफ करा, उत्तर मिळालं नाही.";
 
     res.status(200).json({ reply });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Server error", details: err.message });
   }
 }
