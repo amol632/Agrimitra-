@@ -2,169 +2,111 @@
 <html lang="mr">
 <head>
   <meta charset="UTF-8">
+  <title>AgriMitra AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriMitra AI Chat</title>
-
   <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f0f4f7;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
+    body{
+      margin:0;font-family:Arial;background:#f2f2f2;
+      display:flex;flex-direction:column;height:100vh;
     }
-    header {
-      background: #ff9800;
-      color: white;
-      padding: 15px;
-      font-size: 20px;
-      text-align: center;
-      font-weight: bold;
+    header{
+      background:linear-gradient(135deg,#ff9800,#ff6a00);
+      color:#fff;padding:15px;text-align:center;
+      font-size:20px;font-weight:700;
     }
-    #chat-box {
-      flex: 1;
-      overflow-y: auto;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
+    #chat{
+      flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;
     }
-    .msg {
-      max-width: 80%;
-      margin-bottom: 10px;
-      padding: 10px 15px;
-      border-radius: 15px;
-      line-height: 1.4;
-      font-size: 14px;
-      word-wrap: break-word;
+    .msg{
+      max-width:80%;margin:8px 0;padding:12px 16px;border-radius:15px;font-size:15px;
     }
-    .user {
-      background: #ffe0b2;
-      align-self: flex-end;
+    .user{background:#ffcc80;align-self:flex-end;}
+    .bot{background:#fff;align-self:flex-start;border:1px solid #ddd;}
+    #inputBar{
+      display:flex;gap:10px;padding:10px;background:#fff;border-top:1px solid #ccc;
     }
-    .bot {
-      background: #fff;
-      border: 1px solid #ddd;
-      align-self: flex-start;
+    input{
+      flex:1;padding:12px;border-radius:25px;border:1px solid #ccc;
+      outline:none;font-size:15px;
     }
-    .img-preview {
-      max-width: 200px;
-      border-radius: 10px;
-      margin-top: 5px;
+    button{
+      background:#ff9800;border:none;color:#fff;font-size:18px;
+      padding:12px;border-radius:50%;cursor:pointer;
     }
-
-    #input-area {
-      display: flex;
-      padding: 10px;
-      background: #fff;
-      border-top: 1px solid #ddd;
-      align-items: center;
-      gap: 6px;
-    }
-    input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-      outline: none;
-    }
-    button {
-      padding: 10px 12px;
-      border: none;
-      border-radius: 50%;
-      background: #ff9800;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-    }
-    #file-input {
-      display: none;
-    }
+    input[type=file]{display:none;}
   </style>
 </head>
-
 <body>
-
-<header>🚜 AgriMitra AI Chat</header>
-
-<div id="chat-box">
-  <div class="msg bot">नमस्कार 👋 मी तुमचा शेती AI सहाय्यक आहे. प्रश्न टाका किंवा पिकाचा फोटो अपलोड करा 📷</div>
+<header>🚜 AgriMitra स्मार्ट AI</header>
+<div id="chat">
+  <div class="msg bot">नमस्कार Amol 👋 पिकाचा फोटो टाका किंवा प्रश्न लिहा.</div>
 </div>
 
-<div id="input-area">
-  <input type="text" id="user-input" placeholder="प्रश्न लिहा...">
-  <button id="photo-btn">📷</button>
-  <input type="file" id="file-input" accept="image/*">
-  <button id="send-btn">➤</button>
+<div id="inputBar">
+  <input id="text" placeholder="प्रश्न लिहा...">
+  <button id="imgBtn">📷</button>
+  <input type="file" id="file" accept="image/*">
+  <button id="send">➤</button>
 </div>
 
 <script>
-  const chatBox = document.getElementById("chat-box");
-  const userInput = document.getElementById("user-input");
-  const sendBtn = document.getElementById("send-btn");
-  const fileInput = document.getElementById("file-input");
-  const photoBtn = document.getElementById("photo-btn");
+const chatBox=document.getElementById("chat");
+const input=document.getElementById("text");
+const sendBtn=document.getElementById("send");
+const imgBtn=document.getElementById("imgBtn");
+const fileInput=document.getElementById("file");
 
-  function addMessage(text, type) {
-    const div = document.createElement("div");
-    div.className = "msg " + type;
-    div.textContent = text;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
+function addMsg(text,cls){
+  const div=document.createElement("div");
+  div.className="msg "+cls;
+  div.textContent=text;
+  chatBox.appendChild(div);
+  chatBox.scrollTop=chatBox.scrollHeight;
+}
 
-  function addImage(src) {
-    const img = document.createElement("img");
-    img.src = src;
-    img.className = "img-preview";
-    chatBox.appendChild(img);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
+// Text message
+async function sendText(){
+  const msg=input.value.trim();
+  if(!msg) return;
+  addMsg(msg,"user");
+  input.value="";
 
-  async function sendToAI(text, imageBase64 = null, mimeType = null) {
-    addMessage("⏳ विचार करत आहे...", "bot");
+  const res=await fetch("/api/chat",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:msg})
+  });
 
-    const body = imageBase64 ? {
-      message: "या पिकाचा फोटो पाहून रोग ओळखा आणि उपाय सांगा.",
-      image: imageBase64,
-      mimeType: mimeType
-    } : { message: text };
+  const data=await res.json();
+  addMsg(data.reply || "उत्तर मिळालं नाही.","bot");
+}
 
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
+// Image send
+async function sendImage(file){
+  addMsg("📷 फोटो अपलोड झाला आहे","user");
+  const r=new FileReader();
+  r.onload=async()=>{
+    const base64=r.result.split(",")[1];
+
+    const res=await fetch("/api/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({image:base64})
     });
 
-    const data = await res.json();
-    chatBox.lastChild.remove();
-    addMessage(data.reply || "क्षमस्व, उत्तर मिळाले नाही.", "bot");
-  }
-
-  sendBtn.onclick = () => {
-    const text = userInput.value.trim();
-    if (!text) return;
-    addMessage(text, "user");
-    userInput.value = "";
-    sendToAI(text);
+    const data=await res.json();
+    addMsg(data.reply || "फोटो ओळखता आला नाही","bot");
   };
+  r.readAsDataURL(file);
+}
 
-  photoBtn.onclick = () => fileInput.click();
-
-  fileInput.onchange = () => {
-    const file = fileInput.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async () => {
-      addImage(reader.result);
-      const base64 = reader.result.split(",")[1];
-      sendToAI("", base64, file.type);
-    };
-    reader.readAsDataURL(file);
-  };
+sendBtn.onclick=sendText;
+input.onkeypress=e=>{if(e.key==="Enter")sendText()};
+imgBtn.onclick=()=>fileInput.click();
+fileInput.onchange=e=>{
+  const file=e.target.files[0];
+  if(file)sendImage(file);
+};
 </script>
-
 </body>
 </html>
