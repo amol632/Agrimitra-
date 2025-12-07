@@ -1,51 +1,44 @@
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST allowed" });
-  }
-
-  const { message, image } = req.body;
-
-  const API_KEY = process.env.GEMINI_API_KEY;
-
-  if (!API_KEY) {
-    return res.status(500).json({ error: "API Key missing" });
-  }
-
   try {
-    const parts = [];
+    const apiKey = process.env.GEMINI_API_KEY;
+    const body = req.body;
+    let requestBody;
 
-    if (message) {
-      parts.push({ text: message });
-    }
-
-    if (image) {
-      parts.push({
-        inlineData: {
-          mimeType: "image/jpeg",
-          data: image,
-        },
-      });
+    if (body.image) {
+      requestBody = {
+        contents: [
+          {
+            parts: [
+              { text: "या फोटोवर आधारित माहिती द्या (शेतीसाठी संबंधित)." },
+              {
+                inlineData: {
+                  mimeType: body.mimeType,
+                  data: body.image,
+                },
+              },
+            ],
+          },
+        ],
+      };
+    } else {
+      requestBody = {
+        contents: [{ parts: [{ text: body.prompt || "Hello" }] }],
+      };
     }
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts }],
-        }),
+        body: JSON.stringify(requestBody),
       }
     );
 
     const data = await response.json();
-
-    const reply =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "क्षमस्व, मला उत्तर सापडलं नाही.";
-
-    res.json({ reply });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "उत्तर मिळालं नाही.";
+    res.status(200).json({ reply });
+  } catch (error) {
+    res.status(500).json({ reply: "Server error ❌" });
   }
 }
