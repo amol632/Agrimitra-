@@ -141,29 +141,35 @@
 
   async function sendToServer(payload) {
     try {
-      const res = await fetch('/api/chat', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ message: userText })
-});
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
 
-const data = await res.json();
-botReply = data.reply;
+      const data = await res.json();
+      return data; // ✅ परत पाठवत आहोत
+    } catch (err) {
+      return { reply: "❌ Server error" };
     }
   }
 
   async function sendMessage() {
     const text = userInput.value.trim();
     if (!text) return;
+
     addMessage(text, "user");
     userInput.value = "";
 
-    addMessage("✍️ उत्तर तयार होत आहे...", "bot");
+    const typingDiv = document.createElement("div");
+    typingDiv.className = "msg bot typing";
+    typingDiv.textContent = "✍️ उत्तर तयार होत आहे...";
+    chatBody.appendChild(typingDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
 
     const data = await sendToServer({ message: text });
 
-    const lastBot = document.querySelectorAll(".bot");
-    lastBot[lastBot.length - 1].textContent = data.reply || "उत्तर मिळाले नाही.";
+    typingDiv.textContent = data.reply || "उत्तर मिळाले नाही.";
   }
 
   upload.addEventListener("change", () => {
@@ -176,19 +182,22 @@ botReply = data.reply;
     reader.onload = async () => {
       const base64 = reader.result.split(",")[1];
 
-      addMessage("🔍 फोटो तपासला जात आहे...", "bot");
+      const typingDiv = document.createElement("div");
+      typingDiv.className = "msg bot typing";
+      typingDiv.textContent = "🔍 फोटो तपासत आहे...";
+      chatBody.appendChild(typingDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
 
       const data = await sendToServer({
         image: base64,
         mimeType: file.type
       });
 
-      const lastBot = document.querySelectorAll(".bot");
-      lastBot[lastBot.length - 1].textContent = data.reply || "फोटो समजला नाही.";
+      typingDiv.textContent = data.reply || "फोटो समजला नाही.";
     };
     reader.readAsDataURL(file);
   });
-</script>
+    </script>
 
 </body>
 </html>
