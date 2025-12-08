@@ -3,37 +3,41 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Only POST allowed" });
   }
 
-  const { message, image } = req.body;
-
   try {
+    const { message, image } = req.body;
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    let parts = [];
+    if (message) {
+      parts.push({ text: message });
+    }
+    if (image) {
+      parts.push({
+        inlineData: {
+          mimeType: "image/jpeg",
+          data: image,
+        },
+      });
+    }
+
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: message || "या फोटोबद्दल माहिती द्या" },
-                ...(image
-                  ? [{
-                      inlineData: {
-                        mimeType: "image/jpeg",
-                        data: image
-                      }
-                    }]
-                  : [])
-              ]
-            }
-          ]
-        })
+          contents: [{ parts }],
+        }),
       }
     );
 
     const data = await response.json();
-    res.json(data);
+    const reply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "मला समजलं नाही.";
+
+    res.status(200).json({ reply });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "काहीतरी चूक झाली" });
   }
 }
