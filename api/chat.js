@@ -4,32 +4,43 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message } = req.body;
+    const { message, image } = req.body;
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    let parts = [];
+
+    if (message) {
+      parts.push({ text: message });
+    }
+
+    if (image) {
+      parts.push({
+        inlineData: {
+          mimeType: "image/jpeg",
+          data: image
+        }
+      });
+    }
 
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" +
-        process.env.GEMINI_API_KEY,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: message }],
-            },
-          ],
-        }),
+          contents: [{ parts }]
+        })
       }
     );
 
     const data = await response.json();
 
-    const text =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "उत्तर मिळाले नाही.";
-
-    res.status(200).json({ reply: text });
+    res.json({
+      reply:
+        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "माफ करा, रोग ओळखता आला नाही."
+    });
   } catch (err) {
-    res.status(500).json({ error: "AI Error" });
+    res.status(500).json({ error: "Server Error" });
   }
 }
