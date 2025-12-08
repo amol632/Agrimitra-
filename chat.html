@@ -127,77 +127,44 @@
 </div>
 
 <script>
-  const chatBody = document.getElementById("chatBody");
-  const userInput = document.getElementById("userInput");
-  const upload = document.getElementById("upload");
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const fileInput = document.getElementById("imageInput");
+  const chatBox = document.getElementById("chatBox");
 
-  function addMessage(text, type) {
-    const div = document.createElement("div");
-    div.className = "msg " + type;
-    div.textContent = text;
-    chatBody.appendChild(div);
-    chatBody.scrollTop = chatBody.scrollHeight;
+  const userText = input.value.trim();
+  const file = fileInput.files[0];
+
+  if (!userText && !file) return;
+
+  // User Message
+  if (userText) {
+    chatBox.innerHTML += `<div class="user">👤 ${userText}</div>`;
+    input.value = "";
   }
 
-  async function sendToServer(payload) {
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-      return data; // ✅ परत पाठवत आहोत
-    } catch (err) {
-      return { reply: "❌ Server error" };
-    }
+  if (file) {
+    chatBox.innerHTML += `<div class="user">📷 फोटो पाठवला</div>`;
   }
 
-  async function sendMessage() {
-    const text = userInput.value.trim();
-    if (!text) return;
+  const formData = new FormData();
+  formData.append("message", userText);
+  if (file) formData.append("image", file);
 
-    addMessage(text, "user");
-    userInput.value = "";
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      body: formData
+    });
 
-    const typingDiv = document.createElement("div");
-    typingDiv.className = "msg bot typing";
-    typingDiv.textContent = "✍️ उत्तर तयार होत आहे...";
-    chatBody.appendChild(typingDiv);
-    chatBody.scrollTop = chatBody.scrollHeight;
-
-    const data = await sendToServer({ message: text });
-
-    typingDiv.textContent = data.reply || "उत्तर मिळाले नाही.";
+    const data = await res.json();
+    chatBox.innerHTML += `<div class="bot">🤖 ${data.reply}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch (err) {
+    chatBox.innerHTML += `<div class="bot">❌ काहीतरी चूक झाली</div>`;
   }
-
-  upload.addEventListener("change", () => {
-    const file = upload.files[0];
-    if (!file) return;
-
-    addMessage("📷 फोटो पाठवला.", "user");
-
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const base64 = reader.result.split(",")[1];
-
-      const typingDiv = document.createElement("div");
-      typingDiv.className = "msg bot typing";
-      typingDiv.textContent = "🔍 फोटो तपासत आहे...";
-      chatBody.appendChild(typingDiv);
-      chatBody.scrollTop = chatBody.scrollHeight;
-
-      const data = await sendToServer({
-        image: base64,
-        mimeType: file.type
-      });
-
-      typingDiv.textContent = data.reply || "फोटो समजला नाही.";
-    };
-    reader.readAsDataURL(file);
-  });
-    </script>
+}
+</script>
 
 </body>
 </html>
