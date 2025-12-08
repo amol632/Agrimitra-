@@ -1,50 +1,35 @@
-export const config = {
-  api: { bodyParser: false }
-};
-
-import formidable from "formidable";
-import fs from "fs";
-
 export default async function handler(req, res) {
-  const form = formidable();
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-  form.parse(req, async (err, fields, files) => {
-    const message = fields.message || "";
-    const imageFile = files.image;
-
-    let imageBase64 = null;
-
-    if (imageFile) {
-      const buffer = fs.readFileSync(imageFile.filepath);
-      imageBase64 = buffer.toString("base64");
-    }
-
-    const parts = [];
-    if (message) parts.push({ text: message });
-
-    if (imageBase64) {
-      parts.push({
-        inlineData: {
-          mimeType: imageFile.mimetype,
-          data: imageBase64
-        }
-      });
-    }
+  try {
+    const { message } = req.body;
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" +
+        process.env.GEMINI_API_KEY,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ parts }]
-        })
+          contents: [
+            {
+              parts: [{ text: message }],
+            },
+          ],
+        }),
       }
     );
 
     const data = await response.json();
-    res.json({
-      reply: data?.candidates?.[0]?.content?.parts?.[0]?.text || "उत्तर मिळाले नाही"
-    });
-  });
+
+    const text =
+      data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "उत्तर मिळाले नाही.";
+
+    res.status(200).json({ reply: text });
+  } catch (err) {
+    res.status(500).json({ error: "AI Error" });
+  }
 }
