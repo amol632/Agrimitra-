@@ -129,22 +129,22 @@
 <script>
 async function sendMessage() {
   const input = document.getElementById("userInput");
-  const fileInput = document.getElementById("imageInput");
-  const chatBox = document.getElementById("chatBox");
+  const fileInput = document.getElementById("upload");   // ✅ बरोबर ID
+  const chatBox = document.getElementById("chatBody");  // ✅ बरोबर ID
 
   const userText = input.value.trim();
   const file = fileInput.files[0];
 
   if (!userText && !file) return;
 
-  // User Message
+  // User Message UI
   if (userText) {
-    chatBox.innerHTML += `<div class="user">👤 ${userText}</div>`;
+    chatBox.innerHTML += `<div class="msg user">👤 ${userText}</div>`;
     input.value = "";
   }
 
   if (file) {
-    chatBox.innerHTML += `<div class="user">📷 फोटो पाठवला</div>`;
+    chatBox.innerHTML += `<div class="msg user">📷 फोटो पाठवला</div>`;
   }
 
   const formData = new FormData();
@@ -158,10 +158,10 @@ async function sendMessage() {
     });
 
     const data = await res.json();
-    chatBox.innerHTML += `<div class="bot">🤖 ${data.reply}</div>`;
+    chatBox.innerHTML += `<div class="msg bot">🤖 ${data.reply}</div>`;
     chatBox.scrollTop = chatBox.scrollHeight;
   } catch (err) {
-    chatBox.innerHTML += `<div class="bot">❌ काहीतरी चूक झाली</div>`;
+    chatBox.innerHTML += `<div class="msg bot">❌ काहीतरी चूक झाली</div>`;
   }
 }
 </script>
