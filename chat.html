@@ -2,121 +2,164 @@
 <html lang="mr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AgriMitra AI Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
+      background: linear-gradient(135deg, #ff9800, #ffcc80);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    header {
-      background: linear-gradient(to right, #ff9900, #ffb347);
-      color: white;
-      text-align: center;
-      padding: 15px;
-      font-size: 22px;
-      font-weight: bold;
-    }
-    #chatBox {
-      padding: 10px;
-      height: 75vh;
-      overflow-y: auto;
+
+    .chat-app {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      height: 95vh;
+      border-radius: 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      overflow: hidden;
     }
+
+    .chat-header {
+      background: #ff9800;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #f4f6f8;
+      display: flex;
+      flex-direction: column;
+    }
+
     .msg {
       max-width: 80%;
       padding: 10px 14px;
-      border-radius: 15px;
-      font-size: 15px;
+      border-radius: 16px;
+      font-size: 14px;
+      margin-bottom: 10px;
+      line-height: 1.4;
     }
-    .bot {
-      background: white;
-      align-self: flex-start;
-      border: 1px solid #ddd;
-    }
+
     .user {
-      background: #ffb84d;
-      color: white;
+      background: #ffcc80;
       align-self: flex-end;
     }
+
+    .bot {
+      background: white;
+      border: 1px solid #ddd;
+      align-self: flex-start;
+    }
+
     .input-bar {
       display: flex;
       padding: 10px;
-      background: white;
       border-top: 1px solid #ddd;
+      background: #fff;
+      align-items: center;
     }
-    input {
+
+    .input-bar input {
       flex: 1;
-      padding: 10px;
-      border-radius: 25px;
+      padding: 12px;
+      border-radius: 20px;
       border: 1px solid #ccc;
       outline: none;
+      font-size: 14px;
     }
-    button {
-      margin-left: 10px;
-      background: #ff9900;
-      border: none;
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      width: 45px;
-      height: 45px;
-      font-size: 18px;
+      margin-left: 8px;
+      background: #ff9800;
       color: white;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover {
+      background: #e68900;
+    }
+
+    input[type="file"] {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-<header>🚜 AgriMitra AI</header>
+<div class="chat-app">
+  <div class="chat-header">🚜 AgriMitra AI</div>
 
-<div id="chatBox">
-  <div class="msg bot">नमस्कार Amol 👋 मी तुमचा स्मार्ट शेती सहाय्यक आहे.</div>
-</div>
+  <div class="chat-body" id="chatBody">
+    <div class="msg bot">नमस्कार 👋 मी तुमचा स्मार्ट शेती सहाय्यक आहे.</div>
+  </div>
 
-<div class="input-bar">
-  <input id="msg" type="text" placeholder="प्रश्न लिहा...">
-  <button onclick="send()">➤</button>
+  <div class="input-bar">
+    <input id="userInput" type="text" placeholder="प्रश्न लिहा...">
+    <button class="icon-btn" onclick="document.getElementById('upload').click()">📷</button>
+    <input type="file" id="upload" accept="image/*">
+    <button class="icon-btn" onclick="sendMessage()">➤</button>
+  </div>
 </div>
 
 <script>
-  async function send() {
-    const input = document.getElementById("msg");
-    const text = input.value.trim();
-    if (!text) return;
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const fileInput = document.getElementById("upload");
+  const chatBox = document.getElementById("chatBody");
 
-    const chatBox = document.getElementById("chatBox");
+  const userText = input.value.trim();
+  const file = fileInput.files[0];
 
-    // User msg
-    const userMsg = document.createElement("div");
-    userMsg.className = "msg user";
-    userMsg.innerText = text;
-    chatBox.appendChild(userMsg);
+  if (!userText && !file) return;
 
+  if (userText) {
+    chatBox.innerHTML += `<div class="msg user">${userText}</div>`;
     input.value = "";
+  }
 
-    // Loading
-    const loading = document.createElement("div");
-    loading.className = "msg bot";
-    loading.innerText = "⏳ लिहित आहे...";
-    chatBox.appendChild(loading);
+  if (file) {
+    chatBox.innerHTML += `<div class="msg user">📷 फोटो पाठवला</div>`;
+  }
 
+  const formData = new FormData();
+  formData.append("message", userText);
+  if (file) formData.append("image", file);
+
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+    chatBox.innerHTML += `<div class="msg bot">${data.reply}</div>`;
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
-      });
-
-      const data = await res.json();
-      loading.innerText = data.reply;
-    } catch {
-      loading.innerText = "❌ काहीतरी चूक झाली";
-    }
+    fileInput.value = "";
+  } catch (err) {
+    chatBox.innerHTML += `<div class="msg bot">❌ AI सर्व्हर एरर</div>`;
   }
+}
 </script>
 
 </body>
