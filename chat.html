@@ -141,14 +141,14 @@
 
   async function sendToServer(payload) {
     try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      return await res.json();
-    } catch (e) {
-      return { reply: "तांत्रिक अडचण आली 😔 पुन्हा प्रयत्न करा." };
+      const res = await fetch('/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ message: userText })
+});
+
+const data = await res.json();
+botReply = data.reply;
     }
   }
 
