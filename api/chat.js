@@ -3,46 +3,46 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Only POST allowed" });
   }
 
-  const { message, image } = req.body;
-  const API_KEY = process.env.GEMINI_API_KEY;
-
   try {
-    const contents = [];
+    const { message, image } = req.body;
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-    // text message
-    if (message) {
-      contents.push({
-        parts: [{ text: message }]
-      });
-    }
-
-    // image message
-    if (image) {
-      contents.push({
-        parts: [
-          { text: "या फोटोवरून पिकाचा रोग ओळखा आणि उपाय सांगा." },
-          {
-            inlineData: {
-              mimeType: "image/jpeg",
-              data: image
+    const body = image
+      ? {
+          contents: [
+            {
+              parts: [
+                { text: message || "या फोटोबद्दल माहिती द्या" },
+                {
+                  inlineData: {
+                    mimeType: "image/jpeg",
+                    data: image
+                  }
+                }
+              ]
             }
-          }
-        ]
-      });
-    }
+          ]
+        }
+      : {
+          contents: [{ parts: [{ text: message }] }]
+        };
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents })
+        body: JSON.stringify(body)
       }
     );
 
     const data = await response.json();
-    res.status(200).json({ reply: data?.candidates?.[0]?.content?.parts?.[0]?.text });
-  } catch (e) {
-    res.status(500).json({ error: "AI error" });
+    const reply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "🤖 उत्तर मिळालं नाही.";
+
+    return res.status(200).json({ reply });
+  } catch (err) {
+    return res.status(500).json({ error: "Server error", details: err.message });
   }
 }
