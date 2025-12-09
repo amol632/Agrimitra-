@@ -1,23 +1,28 @@
+// 1. Google Gemini SDK इम्पोर्ट करा
 import { GoogleGenerativeAI } from "@google/genai";
 
-// Vercel/Next.js मध्ये ही API Key आपोआप ॲक्सेस होईल.
+// 2. Vercel Environment Variable मधून API Key घ्या
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 // API Key उपलब्ध नसल्यास त्वरित त्रुटी हाताळा
 if (!GEMINI_API_KEY) {
+    console.error("Critical Error: GEMINI_API_KEY environment variable not set.");
     throw new Error("GEMINI_API_KEY environment variable not set.");
 }
 
-// Google Generative AI क्लायंट सुरू करा
+// 3. Google Generative AI क्लायंट सुरू करा
 const ai = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 export default async function handler(req, res) {
+  // फक्त POST रिक्वेस्ट स्वीकारणे
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST allowed" });
+    return res.status(405).json({ error: "Only POST method allowed" });
   }
 
   try {
-    const { message, image, mimeType } = req.body; // mimeType देखील स्वीकारा!
+    // 4. रिक्वेस्ट बॉडीमधून आवश्यक डेटा मिळवा
+    // mimeType क्लायंट-साईडवरून पाठवणे आवश्यक आहे (उदा. image/jpeg)
+    const { message, image, mimeType } = req.body;
     
     let parts = [];
 
@@ -28,25 +33,39 @@ export default async function handler(req, res) {
     if (image && mimeType) {
       parts.push({
         inlineData: {
-          mimeType: mimeType, // डायनॅमिक mimeType वापरा
+          mimeType: mimeType, // डायनॅमिक mimeType वापरा (उदा. image/png, image/jpeg)
           data: image
         }
       });
     }
 
-    // gemini-1.5-flash मॉडेल वापरा
+    // 5. AI साठी कॉन्फिगरेशन आणि भूमिकेची सूचना (System Instruction) सेट करा
+    const config = {
+      // System Instruction: AI ला त्याची भूमिका आणि भाषेची सूचना देणे
+      systemInstruction: 
+        "तुम्ही 'अग्रिमित्र' (Agrimitra) चे AI सल्लागार आहात. तुम्ही शेतकऱ्यांना त्यांच्या शेती, पीक, हवामान आणि बाजारभावाशी संबंधित प्रश्नांची उत्तरे देत आहात. तुम्ही नेहमी, वापरकर्त्याने प्रश्न विचारलेल्या भाषेत (मराठी, हिंदी, इंग्रजी) किंवा मराठीमध्ये, सोप्या भाषेत उत्तर द्या. उत्तरांमध्ये तांत्रिक माहिती न वापरता स्थानिक उदाहरणे द्या.",
+      // मॉडेल अधिक क्रिएटिव्ह बनवण्यासाठी तापमान (Optional: 0.0 ते 1.0)
+      temperature: 0.2, 
+    };
+
+    // 6. Gemini API ला कॉल करा
     const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash",
-        contents: [{ parts: parts }]
+        model: "gemini-1.5-flash", // इमेज हाताळण्यासाठी उत्तम मॉडेल
+        contents: [{ parts: parts }],
+        config: config, 
     });
 
-    // SDK वापरल्याने प्रतिसाद हाताळणे सोपे होते.
-    const reply = response.text || "🤖 उत्तर मिळालं नाही.";
+    // 7. प्रतिसाद (Response) हाताळा
+    const reply = response.text || "🤖 क्षमस्व, उत्तर मिळू शकले नाही. कृपया पुन्हा प्रयत्न करा.";
 
     return res.status(200).json({ reply });
+    
   } catch (err) {
-    console.error("Gemini API Error:", err);
-    // त्रुटीच्या तपशीलांसह प्रतिसाद द्या
-    return res.status(500).json({ error: "Server error during Gemini call", details: err.message });
+    // 8. सर्व्हर त्रुटी हाताळा
+    console.error("Gemini API Server Error:", err.message);
+    return res.status(500).json({ 
+        error: "Server error during AI processing.", 
+        details: err.message 
+    });
   }
 }
