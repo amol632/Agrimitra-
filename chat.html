@@ -6,6 +6,7 @@
   <title>AgriMitra AI Chat</title>
 
   <style>
+    /* CSS कोड जसा आहे तसाच ठेवा */
     body {
       margin: 0;
       font-family: "Segoe UI", system-ui, Arial;
@@ -82,6 +83,9 @@
       color: white;
       font-size: 16px;
       cursor: pointer;
+      display: flex; /* For centering icons */
+      align-items: center;
+      justify-content: center;
     }
 
     @keyframes fadeIn {
@@ -110,6 +114,7 @@
     const input = document.getElementById("text");
     const imageInput = document.getElementById("image");
 
+    // संदेश दाखवण्यासाठी फंक्शन
     function add(text, type) {
       const div = document.createElement("div");
       div.className = "msg " + type;
@@ -118,43 +123,61 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
+    // मजकूर पाठवण्यासाठी फंक्शन
     async function sendText() {
       const msg = input.value.trim();
       if (!msg) return;
       add(msg, "user");
       input.value = "";
 
+      // बॅकएंडला फक्त मेसेज पाठवा
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: msg }),
+        // मजकूर संदेशात image आणि mimeType null पाठवा
+        body: JSON.stringify({ 
+            message: msg, 
+            image: null, 
+            mimeType: null 
+        }),
       });
 
       const data = await res.json();
-      add(data.reply || "❌ Error आली", "bot");
+      add(data.reply || "❌ उत्तर मिळाले नाही. Server Error", "bot");
     }
 
+    // इमेज निवडल्यानंतर कॉल होणारे फंक्शन
     imageInput.onchange = async () => {
       const file = imageInput.files[0];
       if (!file) return;
-      add("📷 फोटो पाठवला आहे", "user");
+      
+      // 'loading' मेसेज दाखवा
+      add("📷 फोटो तपासणीसाठी पाठवला आहे...", "user");
 
       const reader = new FileReader();
       reader.onload = async () => {
+        // Base64 डेटा मिळवा आणि 'data:image/...' prefix काढा
         const base64 = reader.result.split(",")[1];
+        
+        // फाइलचा mimeType मिळवा (उदा. image/jpeg)
+        const mimeType = file.type; 
 
+        // API कॉल करा
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: "फोटोवरून रोग ओळख",
-            image: base64
+            message: "या फोटोवरून रोग, कीड किंवा पिकाच्या समस्येबद्दल माहिती द्या.", // इमेजसाठी एक स्पष्ट प्रॉम्प्ट
+            image: base64,
+            mimeType: mimeType // *ही महत्त्वाची सुधारणा आहे*
           })
         });
 
         const data = await res.json();
-        add(data.reply || "❌ फोटो समजला नाही", "bot");
+        add(data.reply || "❌ फोटोवर आधारित उत्तर मिळाले नाही. Server Error", "bot");
       };
+      
+      // फाइल Base64 मध्ये वाचा
       reader.readAsDataURL(file);
     };
   </script>
