@@ -1,46 +1,31 @@
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
   try {
-    const { message, image } = req.body;
+    const { message } = req.body;
+
     const apiKey = process.env.GEMINI_API_KEY;
 
-    let parts = [];
-
-    if (message) {
-      parts.push({ text: message });
-    }
-
-    if (image) {
-      parts.push({
-        inlineData: {
-          mimeType: "image/jpeg",
-          data: image
-        }
-      });
-    }
-
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ parts }]
+          contents: [{ parts: [{ text: message }] }]
         })
       }
     );
 
     const data = await response.json();
 
-    res.json({
-      reply:
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "माफ करा, रोग ओळखता आला नाही."
-    });
+    const reply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "माफ करा, उत्तर मिळाले नाही. कृपया पुन्हा प्रयत्न करा.";
+
+    res.status(200).json({ reply });
+
   } catch (err) {
-    res.status(500).json({ error: "Server Error" });
+    res.status(500).json({
+      reply: "सर्व्हर मध्ये समस्या आली आहे."
+    });
   }
 }
