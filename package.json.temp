@@ -1,0 +1,26 @@
+{
+  "name": "agrimitra-ai-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Agrimitra AI Chatbot using Gemini",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [
+    "agritech",
+    "gemini",
+    "nextjs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/genai": "^0.1.3",
+    "next": "14.0.3",
+    "react": "^18",
+    "react-dom": "^18"
+  }
+}
