@@ -16,11 +16,11 @@
     "nextjs"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "ISC",  
   "dependencies": {
     "@google/genai": "^0.2.0",
     "next": "14.0.3",
     "react": "^18",
-    "react-dom": "^18"  // 
+    "react-dom": "^18"
   }
 }
