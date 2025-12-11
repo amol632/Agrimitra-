@@ -1,7 +1,7 @@
 {
   "name": "agrimitra-ai-app",
   "version": "1.0.0",
-  "type": "module",  // <-- ही नवीन ओळ
+  "type": "module",  
   "private": true,
   "description": "Agrimitra AI Chatbot using Gemini",
   "main": "index.js",
