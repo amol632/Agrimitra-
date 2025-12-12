@@ -1,19 +1,17 @@
-import React from 'react';
-import { useRouter } from 'next/router';
+// pages/index.js
+import { useEffect } from 'react';
 
 export default function HomePage() {
-  const router = useRouter();
 
-  // हे Next.js ला सांगते की chat.html फाईलकडे जा
-  React.useEffect(() => {
-    router.push('/chat.html');
-  }, [router]);
+  // ॲप लोड होताच public/chat.html कडे रिडायरेक्ट करेल
+  useEffect(() => {
+    // थेट HTML फाईलकडे ब्राउझरला पाठवा
+    window.location.replace('/chat.html'); 
+  }, []);
 
   return (
     <div>
-      {/* हे दिसेल, जोपर्यंत रिडायरेक्ट होत नाही */}
-      <h1>Loading AgriMitra Chat Interface...</h1>
-      <p>If not redirected, please click <a href="/chat.html">here</a>.</p>
+      <h1>Redirecting to AgriMitra Chatbot...</h1>
     </div>
   );
 }
