@@ -49,11 +49,14 @@ export default async function handler(req, res) {
     };
 
     // 6. Gemini API ला कॉल करा
-    const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash", // इमेज हाताळण्यासाठी उत्तम मॉडेल
-        contents: [{ parts: parts }],
-        config: config, 
-    });
+
+// बदला: ai.models.generateContent ({
+const response = await ai.generateContent({ // सुधारित कोड
+    model: "gemini-1.5-flash", 
+    contents: [{ parts: parts }],
+    config: config, 
+});
+      
 
     // 7. प्रतिसाद (Response) हाताळा
     const reply = response.text || "🤖 क्षमस्व, उत्तर मिळू शकले नाही. कृपया पुन्हा प्रयत्न करा.";
