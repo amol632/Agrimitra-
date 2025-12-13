@@ -1,5 +1,13 @@
-// ✅ next.config.mjs मधील कोड
-/** @type {import('next').NextConfig} */
-const nextConfig = {}; // तुमच्या सेटिंग्ज रिकाम्या राहू द्या
+// next.config.mjs 
 
-export default nextConfig; // 'module.exports' अजिबात वापरू नका
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // 🛑 हा बदल आवश्यक आहे. हा Next.js ला सांगतो की ॲप स्टॅटिक आहे.
+  output: 'export', 
+  
+  // ॲप बनवताना (build) console.log वगळण्यासाठी:
+  reactStrictMode: false,
+};
+
+export default nextConfig;
+
