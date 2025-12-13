@@ -1,10 +1,7 @@
-// ✅ नवीन, योग्य कोड (ES Module)
+// ✅ हा नवीन आणि योग्य कोड वापरा
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  // तुमचे Next.js सेटिंग्ज येथे जोडा (उदा. output: 'export' किंवा images settings)
-  // सध्या कोणतीही सेटिंग्ज नसतील तर, फाईल रिकामी ठेवा
-};
+const nextConfig = {};
 
-export default nextConfig; // ✅ ही ओळ वापरा
-
+export default nextConfig; // 'module.exports' ऐवजी 'export default' वापरा
 
